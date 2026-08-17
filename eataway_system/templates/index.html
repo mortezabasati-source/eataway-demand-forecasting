@@ -1,0 +1,1178 @@
+<!DOCTYPE html>
+<html lang="sv">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Eataway — Leveransprognos</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@300;400;500&family=IBM+Plex+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg:        #f5f6f8;
+    --bg2:       #ffffff;
+    --bg3:       #f0f2f5;
+    --border:    #e2e5ea;
+    --border2:   #cbd0d8;
+    --text:      #1a1d23;
+    --muted:     #6b7280;
+    --muted2:    #9ca3af;
+    --orange:    #e07520;
+    --orange-lt: #fef3e8;
+    --orange-md: #f5a623;
+    --green:     #16a34a;
+    --green-lt:  #f0fdf4;
+    --red:       #dc2626;
+    --red-lt:    #fef2f2;
+    --blue:      #2563eb;
+    --blue-lt:   #eff6ff;
+    --mono:      'IBM Plex Mono', monospace;
+    --sans:      'IBM Plex Sans', sans-serif;
+    --radius:    6px;
+    --shadow:    0 1px 3px rgba(0,0,0,0.08), 0 1px 2px rgba(0,0,0,0.04);
+    --shadow-md: 0 4px 6px rgba(0,0,0,0.07), 0 2px 4px rgba(0,0,0,0.05);
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: var(--sans);
+    font-size: 13px;
+    min-height: 100vh;
+  }
+
+  /* ── HEADER ─────────────────────────────────────────── */
+  header {
+    background: var(--bg2);
+    border-bottom: 1px solid var(--border);
+    padding: 0 32px;
+    display: flex;
+    align-items: center;
+    gap: 24px;
+    height: 56px;
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    box-shadow: var(--shadow);
+  }
+
+  .logo {
+    font-family: var(--sans);
+    font-weight: 700;
+    font-size: 16px;
+    color: var(--orange);
+    letter-spacing: -0.3px;
+    white-space: nowrap;
+  }
+  .logo span { color: var(--muted); font-weight: 400; }
+
+  /* ── DATE RANGE NAVIGATOR ────────────────────────────── */
+  .date-nav {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    flex: 1;
+  }
+  .week-nav-btn {
+    background: none;
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    color: var(--muted);
+    cursor: pointer;
+    width: 28px;
+    height: 28px;
+    font-size: 16px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.15s;
+    flex-shrink: 0;
+    padding: 0;
+    line-height: 1;
+  }
+  .week-nav-btn:hover { border-color: var(--orange); color: var(--orange); }
+
+  .date-range-box {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    background: var(--bg3);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 5px 12px;
+    transition: border-color 0.15s;
+  }
+  .date-range-box:focus-within { border-color: var(--orange); }
+
+  .date-input {
+    background: transparent;
+    border: none;
+    outline: none;
+    font-family: var(--mono);
+    font-size: 12px;
+    font-weight: 500;
+    color: var(--text);
+    cursor: pointer;
+    padding: 0;
+    /* Chrome date input styling */
+    -webkit-appearance: none;
+  }
+  .date-input::-webkit-calendar-picker-indicator {
+    opacity: 0.5;
+    cursor: pointer;
+    margin-left: 2px;
+  }
+  .date-input::-webkit-calendar-picker-indicator:hover {
+    opacity: 1;
+  }
+
+  .date-sep {
+    color: var(--muted2);
+    font-size: 13px;
+    flex-shrink: 0;
+  }
+
+  .date-label {
+    font-size: 10px;
+    font-weight: 600;
+    color: var(--muted2);
+    text-transform: uppercase;
+    letter-spacing: 0.6px;
+    flex-shrink: 0;
+  }
+
+  /* data type badge */
+  .dtype-badge {
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 0.7px;
+    padding: 2px 8px;
+    border-radius: 4px;
+    white-space: nowrap;
+    flex-shrink: 0;
+  }
+  .dtype-badge.predicted {
+    background: var(--orange-lt);
+    color: var(--orange);
+    border: 1px solid #f5c896;
+  }
+  .dtype-badge.actual {
+    background: var(--green-lt);
+    color: var(--green);
+    border: 1px solid #86efac;
+  }
+  .dtype-badge.nodata {
+    background: var(--bg3);
+    color: var(--muted2);
+    border: 1px solid var(--border);
+  }
+
+  /* Quick-select buttons */
+  .quick-btns {
+    display: flex;
+    gap: 4px;
+    flex-shrink: 0;
+  }
+  .quick-btn {
+    background: var(--bg3);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    color: var(--muted);
+    cursor: pointer;
+    padding: 4px 10px;
+    font-size: 11px;
+    font-weight: 500;
+    transition: all 0.15s;
+    white-space: nowrap;
+  }
+  .quick-btn:hover { border-color: var(--orange); color: var(--orange); }
+  .quick-btn.active { border-color: var(--orange); color: var(--orange); background: var(--orange-lt); }
+
+  /* ── TABS ────────────────────────────────────────────── */
+  nav {
+    background: var(--bg2);
+    border-bottom: 1px solid var(--border);
+    padding: 0 32px;
+    display: flex;
+    gap: 0;
+  }
+
+  .tab {
+    padding: 12px 20px;
+    cursor: pointer;
+    color: var(--muted);
+    font-size: 13px;
+    font-weight: 500;
+    border-bottom: 2px solid transparent;
+    margin-bottom: -1px;
+    transition: all 0.15s;
+    user-select: none;
+    white-space: nowrap;
+  }
+  .tab:hover { color: var(--text); }
+  .tab.active { color: var(--orange); border-bottom-color: var(--orange); }
+
+  /* ── MAIN ────────────────────────────────────────────── */
+  main { padding: 24px 32px; max-width: 1400px; margin: 0 auto; }
+  .panel { display: none; }
+  .panel.active { display: block; }
+
+  /* ── METRICS ─────────────────────────────────────────── */
+  .metrics {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 12px;
+    margin-bottom: 24px;
+  }
+
+  .metric-card {
+    background: var(--bg2);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 16px 18px;
+    box-shadow: var(--shadow);
+  }
+  .metric-label {
+    font-size: 11px;
+    font-weight: 500;
+    color: var(--muted);
+    text-transform: uppercase;
+    letter-spacing: 0.8px;
+    margin-bottom: 6px;
+  }
+  .metric-value {
+    font-family: var(--mono);
+    font-size: 24px;
+    font-weight: 500;
+    color: var(--text);
+  }
+  .metric-value.good  { color: var(--green); }
+  .metric-value.warn  { color: var(--orange); }
+  .metric-sub {
+    font-size: 11px;
+    color: var(--muted2);
+    margin-top: 3px;
+  }
+
+  /* ── TOOLBAR ─────────────────────────────────────────── */
+  .toolbar {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 16px;
+    flex-wrap: wrap;
+  }
+
+  .search-input {
+    background: var(--bg2);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    color: var(--text);
+    padding: 8px 12px;
+    font-family: var(--sans);
+    font-size: 13px;
+    width: 260px;
+    outline: none;
+    transition: border-color 0.15s;
+    box-shadow: var(--shadow);
+  }
+  .search-input:focus { border-color: var(--orange); }
+  .search-input::placeholder { color: var(--muted2); }
+
+  .total-pill {
+    background: var(--orange-lt);
+    border: 1px solid #f5c896;
+    border-radius: var(--radius);
+    padding: 7px 14px;
+    font-size: 12px;
+    color: var(--orange);
+    font-weight: 600;
+  }
+
+  .btn {
+    background: var(--bg2);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    color: var(--muted);
+    padding: 8px 14px;
+    font-size: 12px;
+    font-weight: 500;
+    cursor: pointer;
+    text-decoration: none;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    transition: all 0.15s;
+    box-shadow: var(--shadow);
+  }
+  .btn:hover { border-color: var(--orange); color: var(--orange); }
+
+  .btn-primary {
+    background: var(--orange);
+    border-color: var(--orange);
+    color: #fff;
+    font-weight: 600;
+    padding: 9px 20px;
+    font-size: 13px;
+  }
+  .btn-primary:hover { background: #c4671a; border-color: #c4671a; color: #fff; }
+  .btn-primary:disabled { background: var(--border2); border-color: var(--border2); color: var(--muted); cursor: not-allowed; }
+
+  /* ── DRIVER VIEW ─────────────────────────────────────── */
+  .route-block { margin-bottom: 16px; }
+
+  .route-header {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 10px 16px;
+    background: var(--bg2);
+    border: 1px solid var(--border);
+    border-left: 3px solid var(--orange);
+    border-radius: var(--radius) var(--radius) 0 0;
+    cursor: pointer;
+    user-select: none;
+    box-shadow: var(--shadow);
+  }
+  .route-name {
+    font-weight: 600;
+    font-size: 13px;
+    color: var(--text);
+  }
+  .route-meta { color: var(--muted); font-size: 12px; }
+  .route-toggle { margin-left: auto; color: var(--muted2); font-size: 14px; transition: transform 0.2s; }
+  .route-header.collapsed .route-toggle { transform: rotate(-90deg); }
+
+  .store-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+    gap: 1px;
+    background: var(--border);
+    border: 1px solid var(--border);
+    border-top: none;
+    border-radius: 0 0 var(--radius) var(--radius);
+    overflow: hidden;
+  }
+
+  .store-card { background: var(--bg2); }
+
+  .store-name {
+    padding: 9px 14px 7px;
+    font-weight: 600;
+    font-size: 12px;
+    color: var(--text);
+    background: var(--bg3);
+    border-bottom: 1px solid var(--border);
+  }
+
+  .day-rows { padding: 4px 0; }
+
+  .day-row {
+    display: grid;
+    grid-template-columns: 72px 40px 72px 1fr;
+    align-items: start;
+    padding: 5px 14px;
+    gap: 8px;
+    transition: background 0.1s;
+  }
+  .day-row:hover { background: var(--orange-lt); }
+
+  .day-name {
+    font-family: var(--mono);
+    font-size: 11px;
+    font-weight: 500;
+    color: var(--muted);
+    padding-top: 1px;
+  }
+  .day-qty {
+    font-family: var(--mono);
+    font-size: 14px;
+    font-weight: 500;
+    color: var(--text);
+    text-align: right;
+  }
+  .day-qty.high { color: var(--orange); font-weight: 600; }
+  .day-range {
+    font-family: var(--mono);
+    font-size: 10px;
+    color: var(--muted2);
+    padding-top: 2px;
+    white-space: nowrap;
+  }
+  .day-products {
+    font-size: 10.5px;
+    color: var(--muted);
+    line-height: 1.55;
+  }
+
+  /* ── KITCHEN VIEW ────────────────────────────────────── */
+  .day-section { margin-bottom: 20px; }
+
+  .day-title {
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--text);
+    padding: 10px 16px;
+    background: var(--bg2);
+    border: 1px solid var(--border);
+    border-left: 3px solid var(--blue);
+    border-radius: var(--radius) var(--radius) 0 0;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    box-shadow: var(--shadow);
+  }
+  .day-title-sub {
+    font-size: 11px;
+    color: var(--muted);
+    font-weight: 400;
+  }
+
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    border: 1px solid var(--border);
+    border-top: none;
+    border-radius: 0 0 var(--radius) var(--radius);
+    overflow: hidden;
+    background: var(--bg2);
+    box-shadow: var(--shadow);
+  }
+
+  thead th {
+    background: var(--bg3);
+    padding: 8px 14px;
+    text-align: left;
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 0.5px;
+    color: var(--muted);
+    border-bottom: 1px solid var(--border);
+  }
+
+  tbody tr { border-bottom: 1px solid var(--border); }
+  tbody tr:last-child { border-bottom: none; }
+  tbody tr:hover { background: var(--bg3); }
+
+  tbody td { padding: 9px 14px; font-size: 13px; }
+
+  .td-type    { color: var(--muted); font-size: 12px; }
+  .td-product { color: var(--text); font-weight: 500; }
+  .td-qty {
+    font-family: var(--mono);
+    font-size: 15px;
+    font-weight: 600;
+    color: var(--blue);
+    text-align: right;
+  }
+  .td-range { color: var(--muted2); font-family: var(--mono); font-size: 11px; }
+  .td-stores { color: var(--muted); font-size: 12px; text-align: center; }
+
+  /* ── PIPELINE ────────────────────────────────────────── */
+  .run-section {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    margin-bottom: 20px;
+    flex-wrap: wrap;
+  }
+
+
+  /* ── EMPTY STATE ─────────────────────────────────────── */
+  .empty {
+    text-align: center;
+    padding: 72px 20px;
+    color: var(--muted);
+  }
+  .empty-icon { font-size: 40px; margin-bottom: 16px; }
+  .empty h2 { font-size: 18px; font-weight: 600; color: var(--text); margin-bottom: 8px; }
+  .empty p  { font-size: 13px; line-height: 1.7; max-width: 380px; margin: 0 auto 20px; }
+
+  /* ── STORE ACCORDION (Tabell-vy) ────────────────────── */
+  .store-acc-block { margin-bottom: 16px; }
+
+  .store-list {
+    border: 1px solid var(--border);
+    border-top: none;
+    border-radius: 0 0 var(--radius) var(--radius);
+    overflow: hidden;
+    background: var(--bg2);
+  }
+
+  .store-row-wrap { border-top: 1px solid var(--border); }
+  .store-row-wrap:first-child { border-top: none; }
+
+  .store-row-header {
+    display: grid;
+    grid-template-columns: 22px 1fr 118px 72px;
+    align-items: center;
+    padding: 10px 16px;
+    cursor: pointer;
+    user-select: none;
+    gap: 12px;
+    transition: background 0.12s;
+  }
+  .store-row-header:hover { background: var(--orange-lt); }
+  .store-row-header.open  {
+    background: var(--orange-lt);
+    border-left: 3px solid var(--orange);
+    padding-left: 13px;
+  }
+
+  .store-toggle {
+    font-size: 11px;
+    color: var(--muted2);
+    transition: transform 0.2s;
+    text-align: center;
+  }
+  .store-toggle.open { transform: rotate(90deg); }
+
+  .store-row-name  { font-weight: 600; font-size: 13px; }
+  .store-row-datum { font-family: var(--mono); font-size: 11px; color: var(--muted); }
+  .store-row-total {
+    font-family: var(--mono);
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--blue);
+    text-align: right;
+  }
+  .store-row-total.high { color: var(--orange); }
+
+  .store-row-body { display: none; }
+  .store-row-body.open { display: block; }
+
+  .store-prod-table {
+    border: none !important;
+    box-shadow: none !important;
+    background: var(--bg3) !important;
+    border-radius: 0 !important;
+    border-top: 1px solid var(--border) !important;
+  }
+  .store-prod-table thead th {
+    background: var(--bg3) !important;
+    padding: 6px 14px !important;
+    font-size: 10px !important;
+    letter-spacing: 0.5px !important;
+    color: var(--muted2) !important;
+    border-bottom: 1px solid var(--border) !important;
+    cursor: default !important;
+  }
+  .store-prod-table thead th:first-child { padding-left: 52px !important; }
+  .store-prod-table tbody td { padding: 8px 14px !important; font-size: 12.5px; }
+  .store-prod-table tbody td:first-child { padding-left: 52px !important; color: var(--muted); }
+  .store-prod-table .spt-sort { font-weight: 500; }
+  .store-prod-table .spt-qty {
+    font-family: var(--mono);
+    font-weight: 600;
+    color: var(--blue);
+    text-align: right;
+  }
+  .store-prod-table .spt-qty.high { color: var(--orange); }
+
+  /* ── SCROLLBAR ───────────────────────────────────────── */
+  ::-webkit-scrollbar { width: 6px; height: 6px; }
+  ::-webkit-scrollbar-track { background: var(--bg3); }
+  ::-webkit-scrollbar-thumb { background: var(--border2); border-radius: 3px; }
+  ::-webkit-scrollbar-thumb:hover { background: var(--muted2); }
+</style>
+</head>
+<body>
+
+<!-- ── HEADER ──────────────────────────────────────────────── -->
+<header>
+  <div class="logo">Eataway <span>/ Prognos</span></div>
+
+  <div class="date-nav">
+    <!-- Step back 7 days -->
+    <button class="week-nav-btn" onclick="stepRange(-7)" title="Föregående vecka">&#8249;</button>
+
+    <!-- Date range picker box -->
+    <div class="date-range-box">
+      <span class="date-label">Från</span>
+      <input type="date" id="date-from" class="date-input"
+             value="{{ init_from }}"
+             {% if min_date %}min="{{ min_date }}"{% endif %}
+             onchange="onDateChange()">
+      <span class="date-sep">→</span>
+      <span class="date-label">Till</span>
+      <input type="date" id="date-to" class="date-input"
+             value="{{ init_to }}"
+             {% if min_date %}min="{{ min_date }}"{% endif %}
+             onchange="onDateChange()">
+      <span class="dtype-badge predicted" id="hdr-badge">PROGNOS</span>
+    </div>
+
+    <!-- Step forward 7 days -->
+    <button class="week-nav-btn" onclick="stepRange(7)" title="Nästa vecka">&#8250;</button>
+
+    <!-- Quick-select buttons -->
+    <div class="quick-btns">
+      <button class="quick-btn" id="qbtn-today" onclick="quickSelect('today')" title="Välj idag">Idag</button>
+      <button class="quick-btn" id="qbtn-week"  onclick="quickSelect('week')"  title="Välj denna vecka">Denna vecka</button>
+      <button class="quick-btn" id="qbtn-pred"  onclick="quickSelect('pred')"  title="Gå till prognos-veckan">Prognos</button>
+    </div>
+  </div>
+</header>
+
+<!-- ── NAV ─────────────────────────────────────────────────── -->
+<nav>
+  <div class="tab active" onclick="switchTab('table',this)">📋 Tabell</div>
+  <div class="tab" onclick="switchTab('driver',this)">🚚 Chaufförsvy</div>
+  <div class="tab" onclick="switchTab('kitchen',this)">🍳 Köksvy</div>
+</nav>
+
+<main>
+
+  <!-- ── METRICS ── -->
+  {% if metrics %}
+  <div class="metrics">
+    <div class="metric-card">
+      <div class="metric-label">MAE</div>
+      <div class="metric-value">{{ "%.3f"|format(metrics.mae) }}</div>
+      <div class="metric-sub">genomsnittligt fel per enhet</div>
+    </div>
+    <div class="metric-card">
+      <div class="metric-label">Bias</div>
+      <div class="metric-value {% if metrics.bias|abs < 0.1 %}good{% else %}warn{% endif %}">
+        {{ "%+.3f"|format(metrics.bias) }}
+      </div>
+      <div class="metric-sub">systematisk avvikelse</div>
+    </div>
+    <div class="metric-card">
+      <div class="metric-label">±1 träff</div>
+      <div class="metric-value {% if metrics.hit1 > 0.6 %}good{% endif %}">
+        {{ "%.0f"|format(metrics.hit1 * 100) }}%
+      </div>
+      <div class="metric-sub">inom 1 enhet korrekt</div>
+    </div>
+    <div class="metric-card">
+      <div class="metric-label">±2 träff</div>
+      <div class="metric-value {% if metrics.hit2 > 0.75 %}good{% endif %}">
+        {{ "%.0f"|format(metrics.hit2 * 100) }}%
+      </div>
+      <div class="metric-sub">inom 2 enheter korrekt</div>
+    </div>
+  </div>
+  {% endif %}
+
+  <!-- ════════════════════════════════════════════════════ -->
+  <!-- STORE ACCORDION VIEW (Tabell)                       -->
+  <!-- ════════════════════════════════════════════════════ -->
+  <div id="panel-table" class="panel active">
+    {% if not has_output %}
+    <div class="empty">
+      <div class="empty-icon">📋</div>
+      <h2>Inga resultat ännu</h2>
+      <p>Gå till "Kör Pipeline" för att generera prognoser.</p>
+    </div>
+    {% else %}
+    <div class="toolbar">
+      <input class="search-input" id="table-search" type="text"
+             placeholder="Sök ort, butik, produkt..."
+             oninput="filterTable()">
+      <div class="total-pill">Totalt: <strong id="table-total">—</strong></div>
+      <a class="btn" id="table-gsheet-btn"
+         href="https://docs.google.com/spreadsheets/d/1upeKGfNHZLvvMTGflw_3HJp1flB817XkyO9PMGs1w1o"
+         target="_blank"
+         style="margin-left:auto;background:#1e8e3e;color:#fff;border-color:#1e8e3e;gap:5px;text-decoration:none">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor" style="flex-shrink:0"><path d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm0 16H5V5h14v14zM7 10h2v7H7zm4-3h2v10h-2zm4 6h2v4h-2z"/></svg>
+        Öppna Google Sheet
+      </a>
+    </div>
+    <div id="table-container">
+      <div style="padding:48px;text-align:center;color:var(--muted)">Laddar...</div>
+    </div>
+    {% endif %}
+  </div>
+
+  <!-- ════════════════════════════════════════════════════ -->
+  <!-- DRIVER VIEW                                         -->
+  <!-- ════════════════════════════════════════════════════ -->
+  <div id="panel-driver" class="panel">
+    {% if not has_output %}
+    <div class="empty">
+      <div class="empty-icon">🚚</div>
+      <h2>Inga resultat ännu</h2>
+      <p>Gå till "Kör Pipeline" och klicka på knappen för att generera veckoprognoser.</p>
+    </div>
+    {% else %}
+    <div class="toolbar">
+      <input class="search-input" id="driver-search" type="text"
+             placeholder="Sök butik eller rutt..." oninput="filterDriver()">
+      <div class="total-pill">Totalt: <strong id="driver-total">—</strong> leveranser</div>
+      <a class="btn" href="/api/download/driver" download style="margin-left:auto">↓ Ladda ner CSV</a>
+    </div>
+    <div id="driver-container">Laddar...</div>
+    {% endif %}
+  </div>
+
+  <!-- ════════════════════════════════════════════════════ -->
+  <!-- KITCHEN VIEW                                        -->
+  <!-- ════════════════════════════════════════════════════ -->
+  <div id="panel-kitchen" class="panel">
+    {% if not has_output %}
+    <div class="empty">
+      <div class="empty-icon">🍳</div>
+      <h2>Inga resultat ännu</h2>
+      <p>Ingen data tillgänglig.</p>
+    </div>
+    {% else %}
+    <div class="toolbar">
+      <input class="search-input" id="kitchen-search" type="text"
+             placeholder="Sök produkt eller typ..." oninput="filterKitchen()">
+      <a class="btn" href="/api/download/kitchen" download style="margin-left:auto">↓ Ladda ner CSV</a>
+    </div>
+    <div id="kitchen-container">Laddar...</div>
+    {% endif %}
+  </div>
+
+
+</main>
+
+<script>
+// ── STATE ─────────────────────────────────────────────────────
+let driverData   = null;
+let kitchenData  = null;
+let tableData = [];   // flat rows [{datum,ort,namn,typ,sort,qty}]
+let tableQ    = '';   // search/filter query
+
+// 日期区间状态（从 Flask 传入的初始值）
+let selectedFrom = "{{ init_from }}";
+let selectedTo   = "{{ init_to }}";
+
+// 预测周信息（从 Flask 传入）
+const PRED_WEEK_FROM = "{{ init_from }}";   // 预测周起始日（默认就是预测周）
+const PRED_WEEK_TO   = "{{ init_to }}";
+
+// ── 日期工具 ───────────────────────────────────────────────────
+function addDays(dateStr, days) {
+  const d = new Date(dateStr);
+  d.setDate(d.getDate() + days);
+  return d.toISOString().slice(0, 10);
+}
+
+function isoWeekRange(dateStr) {
+  // 返回包含该日期的周的周一和周日 (ISO 周: 周一开始)
+  const d   = new Date(dateStr);
+  const day = d.getDay();                          // 0=Sun,1=Mon,...,6=Sat
+  const diff = (day === 0) ? -6 : 1 - day;        // 到本周周一的偏移
+  const mon  = new Date(d); mon.setDate(d.getDate() + diff);
+  const sun  = new Date(mon); sun.setDate(mon.getDate() + 6);
+  return [mon.toISOString().slice(0, 10), sun.toISOString().slice(0, 10)];
+}
+
+function todayStr() {
+  return new Date().toISOString().slice(0, 10);
+}
+
+// ── DATE NAVIGATOR ────────────────────────────────────────────
+function onDateChange() {
+  const f = document.getElementById('date-from').value;
+  const t = document.getElementById('date-to').value;
+  if (!f || !t) return;
+  if (f > t) {
+    // 自动修正：若 from > to，把 to 设为 from
+    document.getElementById('date-to').value = f;
+    selectedFrom = f;
+    selectedTo   = f;
+  } else {
+    selectedFrom = f;
+    selectedTo   = t;
+  }
+  driverData  = null;
+  kitchenData = null;
+  reloadActiveTab();
+}
+
+function stepRange(days) {
+  selectedFrom = addDays(selectedFrom, days);
+  selectedTo   = addDays(selectedTo,   days);
+  document.getElementById('date-from').value = selectedFrom;
+  document.getElementById('date-to').value   = selectedTo;
+  driverData  = null;
+  kitchenData = null;
+  reloadActiveTab();
+}
+
+function quickSelect(mode) {
+  const today = todayStr();
+  if (mode === 'today') {
+    selectedFrom = today;
+    selectedTo   = today;
+  } else if (mode === 'week') {
+    [selectedFrom, selectedTo] = isoWeekRange(today);
+  } else if (mode === 'pred') {
+    selectedFrom = PRED_WEEK_FROM;
+    selectedTo   = PRED_WEEK_TO;
+  }
+  document.getElementById('date-from').value = selectedFrom;
+  document.getElementById('date-to').value   = selectedTo;
+  driverData  = null;
+  kitchenData = null;
+  reloadActiveTab();
+}
+
+function reloadActiveTab() {
+  const active = document.querySelector('.tab.active');
+  if (!active) return;
+  const m = active.getAttribute('onclick').match(/switchTab\('(\w+)'/);
+  if (!m) return;
+  const tab = m[1];
+  if (tab === 'table')        { tableData = []; loadTable(); }
+  else if (tab === 'driver')  loadDriver();
+  else if (tab === 'kitchen') loadKitchen();
+}
+
+function updateHeader(dateRange, type) {
+  const badge = document.getElementById('hdr-badge');
+  if (badge && type) {
+    badge.className = 'dtype-badge ' + type;
+    if (type === 'predicted') badge.textContent = '📈 PROGNOS';
+    else if (type === 'actual') badge.textContent = '✓ FAKTISK';
+    else badge.textContent = 'INGEN DATA';
+  }
+  // Update date range display if provided (optional enhancement)
+}
+
+// ── TABS ──────────────────────────────────────────────────────
+function switchTab(name, el) {
+  document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+  document.querySelectorAll('.panel').forEach(p => p.classList.remove('active'));
+  el.classList.add('active');
+  document.getElementById('panel-' + name).classList.add('active');
+  if (name === 'table')   loadTable();
+  if (name === 'driver')  loadDriver();
+  if (name === 'kitchen') loadKitchen();
+}
+
+// ── DRIVER VIEW ───────────────────────────────────────────────
+async function loadDriver() {
+  const container = document.getElementById('driver-container');
+  if (!container) return;
+  container.innerHTML = '<div style="padding:48px;text-align:center;color:var(--muted)">Laddar...</div>';
+  try {
+    const url = '/api/driver?from=' + encodeURIComponent(selectedFrom)
+              + '&to='              + encodeURIComponent(selectedTo);
+    const res  = await fetch(url);
+    const json = await res.json();
+    driverData = json.data;
+    updateHeader(json.date_range, json.type);
+    if (json.type === 'nodata' || !Object.keys(json.data).length) {
+      container.innerHTML = '<div class="empty"><div class="empty-icon">📭</div>'
+        + '<h2>Ingen data</h2><p>Ingen data hittades för '
+        + esc(selectedFrom) + ' – ' + esc(selectedTo) + '.<br>'
+        + (json.type === 'nodata' ? 'Prognos finns bara för prognos-veckan. Klicka "Prognos"-knappen i toppen.' : '')
+        + '</p></div>';
+    } else {
+      renderDriver(driverData);
+    }
+  } catch(e) {
+    container.innerHTML = '<div class="empty"><div class="empty-icon">⚠</div><h2>Fel</h2><p>' + esc(String(e)) + '</p></div>';
+  }
+}
+
+function renderDriver(data) {
+  const container = document.getElementById('driver-container');
+  if (!container) return;
+  let total = 0, html = '';
+
+  for (const [route, stores] of Object.entries(data)) {
+    const storeCount = Object.keys(stores).length;
+    let storeHtml = '';
+
+    for (const [store, days] of Object.entries(stores)) {
+      let dayHtml = '';
+      for (const d of days) {
+        total += d.qty;
+        const highCls = d.qty >= 10 ? ' high' : '';
+        const prods = d.products
+          ? d.products.split(' | ').map(p => `<div>${esc(p)}</div>`).join('')
+          : '';
+        dayHtml += `
+          <div class="day-row">
+            <div class="day-name">${esc(d.day_label)}</div>
+            <div class="day-qty${highCls}">${d.qty}</div>
+            <div class="day-range">${esc(d.range)}</div>
+            <div class="day-products">${prods}</div>
+          </div>`;
+      }
+      storeHtml += `
+        <div class="store-card">
+          <div class="store-name">${esc(store)}</div>
+          <div class="day-rows">${dayHtml}</div>
+        </div>`;
+    }
+
+    html += `
+      <div class="route-block" data-route="${esc(route.toLowerCase())}">
+        <div class="route-header" onclick="toggleRoute(this)">
+          <div class="route-name">${esc(route)}</div>
+          <div class="route-meta">${storeCount} butiker</div>
+          <div class="route-toggle">▾</div>
+        </div>
+        <div class="store-grid route-body">${storeHtml}</div>
+      </div>`;
+  }
+
+  container.innerHTML = html;
+  const el = document.getElementById('driver-total');
+  if (el) el.textContent = total.toLocaleString('sv-SE');
+  // re-apply filter
+  const q = document.getElementById('driver-search');
+  if (q && q.value) filterDriver();
+}
+
+function toggleRoute(header) {
+  header.classList.toggle('collapsed');
+  const body = header.nextElementSibling;
+  body.style.display = header.classList.contains('collapsed') ? 'none' : 'grid';
+}
+
+function filterDriver() {
+  const q = document.getElementById('driver-search').value.toLowerCase();
+  document.querySelectorAll('.route-block').forEach(block => {
+    const route  = (block.dataset.route || '');
+    const stores = Array.from(block.querySelectorAll('.store-name')).map(e => e.textContent.toLowerCase());
+    block.style.display = (route.includes(q) || stores.some(s => s.includes(q))) ? '' : 'none';
+  });
+}
+
+// ── KITCHEN VIEW ──────────────────────────────────────────────
+async function loadKitchen() {
+  const container = document.getElementById('kitchen-container');
+  if (!container) return;
+  container.innerHTML = '<div style="padding:48px;text-align:center;color:var(--muted)">Laddar...</div>';
+  try {
+    const url = '/api/kitchen?from=' + encodeURIComponent(selectedFrom)
+              + '&to='               + encodeURIComponent(selectedTo);
+    const res  = await fetch(url);
+    const json = await res.json();
+    kitchenData = json.data;
+    updateHeader(json.date_range, json.type);
+    if (json.type === 'nodata' || !Object.keys(json.data).length) {
+      container.innerHTML = '<div class="empty"><div class="empty-icon">📭</div>'
+        + '<h2>Ingen data</h2><p>Ingen data hittades för '
+        + esc(selectedFrom) + ' – ' + esc(selectedTo) + '.</p></div>';
+    } else {
+      renderKitchen(kitchenData);
+    }
+  } catch(e) {
+    container.innerHTML = '<div class="empty"><div class="empty-icon">⚠</div><h2>Fel</h2><p>' + esc(String(e)) + '</p></div>';
+  }
+}
+
+function renderKitchen(data) {
+  const container = document.getElementById('kitchen-container');
+  if (!container) return;
+  // Keys are either day-names (week mode) or ISO date strings (range mode)
+  // Both sort correctly: day names use dayOrder, ISO dates sort alphabetically
+  const dayOrder = {Sunday:0,Monday:1,Tuesday:2,Wednesday:3,Thursday:4,Friday:5,Saturday:6};
+  const days = Object.keys(data).sort((a, b) => {
+    const oa = dayOrder[a]; const ob = dayOrder[b];
+    if (oa !== undefined && ob !== undefined) return oa - ob;
+    // ISO date string comparison (lexicographic = chronological)
+    return a < b ? -1 : a > b ? 1 : 0;
+  });
+  let html = '';
+
+  for (const day of days) {
+    const obj      = data[day];
+    const rows     = obj.rows;
+    const label    = obj.label;
+    const dayTotal = rows.reduce((s,r) => s+r.qty, 0);
+
+    const rowHtml = rows.map(r => `
+      <tr>
+        <td class="td-type">${esc(r.type)}</td>
+        <td class="td-product">${esc(r.product)}</td>
+        <td class="td-qty">${r.qty}</td>
+        <td class="td-range">${esc(r.range)}</td>
+        <td class="td-stores">${r.stores}</td>
+      </tr>`).join('');
+
+    html += `
+      <div class="day-section" data-day="${esc(day.toLowerCase())}">
+        <div class="day-title">
+          ${esc(label)}
+          <span class="day-title-sub">— ${dayTotal} enheter totalt</span>
+        </div>
+        <table>
+          <thead><tr>
+            <th>Typ</th><th>Produkt</th>
+            <th style="text-align:right">Antal</th>
+            <th>Intervall</th>
+            <th style="text-align:center">Butiker</th>
+          </tr></thead>
+          <tbody>${rowHtml}</tbody>
+        </table>
+      </div>`;
+  }
+  container.innerHTML = html;
+  // re-apply filter
+  const q = document.getElementById('kitchen-search');
+  if (q && q.value) filterKitchen();
+}
+
+function filterKitchen() {
+  const q = document.getElementById('kitchen-search').value.toLowerCase();
+  document.querySelectorAll('.day-section').forEach(sec => {
+    let any = false;
+    sec.querySelectorAll('tbody tr').forEach(row => {
+      const vis = row.textContent.toLowerCase().includes(q);
+      row.style.display = vis ? '' : 'none';
+      if (vis) any = true;
+    });
+    sec.style.display = any ? '' : 'none';
+  });
+}
+
+// ── STORE ACCORDION (Tabell-vy) ───────────────────────────────
+async function loadTable() {
+  const container = document.getElementById('table-container');
+  if (!container) return;
+  container.innerHTML = '<div style="padding:48px;text-align:center;color:var(--muted)">Laddar...</div>';
+  try {
+    const url = '/api/flat?from=' + encodeURIComponent(selectedFrom)
+              + '&to='            + encodeURIComponent(selectedTo);
+    const res  = await fetch(url);
+    const json = await res.json();
+    tableData = json.data || [];
+    updateHeader(json.date_range, json.type);
+    renderGroupedTable();
+  } catch(e) {
+    container.innerHTML = '<div class="empty"><div class="empty-icon">⚠</div>'
+      + '<h2>Fel</h2><p>' + esc(String(e)) + '</p></div>';
+  }
+}
+
+function renderGroupedTable() {
+  const container = document.getElementById('table-container');
+  if (!container) return;
+
+  // Filter
+  const q = tableQ.toLowerCase();
+  const filtered = q
+    ? tableData.filter(r =>
+        r.ort.toLowerCase().includes(q) ||
+        r.namn.toLowerCase().includes(q) ||
+        r.typ.toLowerCase().includes(q)  ||
+        r.sort.toLowerCase().includes(q) ||
+        r.datum.includes(q))
+    : tableData.slice();
+
+  if (!filtered.length) {
+    container.innerHTML = '<div class="empty"><div class="empty-icon">📭</div>'
+      + '<h2>Ingen data</h2><p>Ingen data för '
+      + esc(selectedFrom) + ' – ' + esc(selectedTo) + '.</p></div>';
+    const elT = document.getElementById('table-total');
+    if (elT) elT.textContent = '0 butiker';
+    return;
+  }
+
+  // Group: ort → (namn + datum) → products[]
+  const groups = {};
+  filtered.forEach(r => {
+    if (!groups[r.ort]) groups[r.ort] = {};
+    const key = r.namn + '§' + r.datum;
+    if (!groups[r.ort][key])
+      groups[r.ort][key] = { namn: r.namn, datum: r.datum, total: 0, products: [] };
+    groups[r.ort][key].products.push({ typ: r.typ, sort: r.sort, qty: r.qty });
+    groups[r.ort][key].total += r.qty;
+  });
+
+  // Summary counts
+  let totalStores = 0, totalQty = 0;
+  for (const ort in groups) {
+    totalStores += Object.keys(groups[ort]).length;
+    for (const key in groups[ort]) totalQty += groups[ort][key].total;
+  }
+  const elTotal = document.getElementById('table-total');
+  if (elTotal)
+    elTotal.textContent = totalStores.toLocaleString('sv-SE')
+      + ' butiker · ' + totalQty.toLocaleString('sv-SE') + ' st';
+
+  // Render accordion HTML
+  let html = '';
+  Object.keys(groups).sort().forEach(ort => {
+    const storeMap  = groups[ort];
+    const storeKeys = Object.keys(storeMap).sort();
+    const ortTotal  = storeKeys.reduce((s, k) => s + storeMap[k].total, 0);
+
+    let storeHtml = '';
+    storeKeys.forEach(key => {
+      const store = storeMap[key];
+      const prodHtml = store.products.map(p => {
+        const hc = p.qty >= 10 ? ' high' : '';
+        return `<tr>
+          <td class="spt-typ">${esc(p.typ)}</td>
+          <td class="spt-sort">${esc(p.sort)}</td>
+          <td class="spt-qty${hc}">${p.qty}</td>
+        </tr>`;
+      }).join('');
+
+      storeHtml += `
+        <div class="store-row-wrap">
+          <div class="store-row-header" onclick="toggleStoreRow(this)">
+            <div class="store-toggle">▸</div>
+            <div class="store-row-name">${esc(store.namn)}</div>
+            <div class="store-row-datum">${esc(store.datum)}</div>
+            <div class="store-row-total${store.total >= 20 ? ' high' : ''}">${store.total} st</div>
+          </div>
+          <div class="store-row-body">
+            <table class="store-prod-table">
+              <thead><tr>
+                <th>Typ</th>
+                <th>Produkt</th>
+                <th style="text-align:right">Antal</th>
+              </tr></thead>
+              <tbody>${prodHtml}</tbody>
+            </table>
+          </div>
+        </div>`;
+    });
+
+    html += `
+      <div class="store-acc-block" data-ort="${esc(ort.toLowerCase())}">
+        <div class="route-header" onclick="toggleRoute(this)">
+          <div class="route-name">${esc(ort)}</div>
+          <div class="route-meta">${storeKeys.length} butiker · ${ortTotal.toLocaleString('sv-SE')} st</div>
+          <div class="route-toggle">▾</div>
+        </div>
+        <div class="store-list route-body">${storeHtml}</div>
+      </div>`;
+  });
+
+  container.innerHTML = html;
+}
+
+function toggleStoreRow(header) {
+  const toggle = header.querySelector('.store-toggle');
+  const body   = header.nextElementSibling;
+  const isOpen = body.classList.contains('open');
+  body.classList.toggle('open',   !isOpen);
+  toggle.classList.toggle('open', !isOpen);
+  header.classList.toggle('open', !isOpen);
+}
+
+function filterTable() {
+  tableQ = (document.getElementById('table-search')?.value || '');
+  renderGroupedTable();
+}
+
+function downloadFlat() {
+  const url = '/api/download/flat?from=' + encodeURIComponent(selectedFrom)
+            + '&to='                      + encodeURIComponent(selectedTo);
+  window.location.href = url;
+}
+
+
+function esc(s) {
+  return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+}
+
+// ── INIT ──────────────────────────────────────────────────────
+if (document.getElementById('table-container')) loadTable();
+</script>
+</body>
+</html>

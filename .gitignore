@@ -1,0 +1,41 @@
+# Python 虚拟环境（体积很大，不上传）
+.venv/
+.venv1/
+venv/
+env/
+
+# Python 缓存
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+
+# 临时文件
+*.tmp
+.DS_Store
+Thumbs.db
+
+# ── 大数据文件（超过 GitHub 100 MB 限制，不上传）──────────────
+# 1year.csv.zip (6.8 MB) 已包含在仓库里，服务器首次运行会自动解压
+1year.csv
+
+# 训练中间文件（由 feature.py 生成，不需要上传）
+features_ready.csv
+trainable_data.csv
+cleaned_weekly.csv
+
+# 评估报告（不影响网站运行）
+holdout_predictions_v7.csv
+evaluation_v7.csv
+*.log
+
+# 模型文件（如果有）
+*.pkl
+*.joblib
+*.model
+
+# ── Google 服务账号密钥（绝对不能上传到 GitHub）─────────────
+credentials.json
+
+# ── 数据库密码和敏感配置（绝对不能上传到 GitHub）─────────────
+.env
