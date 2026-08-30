@@ -15,7 +15,10 @@ __pycache__/
 .DS_Store
 Thumbs.db
 
-# ── 大数据文件（超过 GitHub 100 MB 限制，不上传）──────────────
+# ── Model Outputs (Do not track) ──────────────
+output_v7/
+predictions/
+
 # 1year.csv.zip (6.8 MB) 已包含在仓库里，服务器首次运行会自动解压
 1year.csv
 

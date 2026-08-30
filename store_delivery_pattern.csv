@@ -1,434 +1,475 @@
 namn,weekday,weeks_with_delivery,total_weeks,frequency,is_delivery_day,demand_sum,demand_ratio
-Coop  SVANDAMMSPLAN,Sunday,1,2,0.5,True,51,0.34
-Coop  SVANDAMMSPLAN,Tuesday,1,2,0.5,True,27,0.18
-Coop  SVANDAMMSPLAN,Thursday,2,2,1.0,True,72,0.48
-Coop Almunge,Sunday,1,2,0.5,True,20,0.15625
-Coop Almunge,Tuesday,1,2,0.5,True,36,0.28125
-Coop Almunge,Thursday,2,2,1.0,True,72,0.5625
-Coop Bagarmossen,Sunday,1,2,0.5,True,158,0.5284280936454849
-Coop Bagarmossen,Tuesday,1,2,0.5,True,61,0.2040133779264214
-Coop Bagarmossen,Thursday,2,2,1.0,True,80,0.26755852842809363
-Coop Barkarby,Sunday,1,2,0.5,True,137,0.37329700272479566
-Coop Barkarby,Tuesday,1,2,0.5,True,58,0.15803814713896458
-Coop Barkarby,Thursday,2,2,1.0,True,172,0.46866485013623976
-Coop Bergshamra,Sunday,1,2,0.5,True,72,0.2938775510204082
-Coop Bergshamra,Tuesday,1,2,0.5,True,59,0.24081632653061225
-Coop Bergshamra,Thursday,2,2,1.0,True,114,0.46530612244897956
-Coop Björkhagen,Sunday,1,2,0.5,True,36,0.4090909090909091
-Coop Björkhagen,Tuesday,1,2,0.5,True,52,0.5909090909090909
-Coop Bondegatan,Sunday,1,2,0.5,True,132,0.4429530201342282
-Coop Bondegatan,Tuesday,1,2,0.5,True,40,0.1342281879194631
-Coop Bondegatan,Thursday,2,2,1.0,True,126,0.4228187919463087
-Coop Bredden,Sunday,1,2,0.5,True,81,0.28125
-Coop Bredden,Tuesday,1,2,0.5,True,29,0.10069444444444445
-Coop Bredden,Thursday,2,2,1.0,True,178,0.6180555555555556
-Coop Brommaplan,Sunday,1,2,0.5,True,91,0.5870967741935483
-Coop Brommaplan,Tuesday,1,2,0.5,True,64,0.4129032258064516
-Coop Bromsten,Sunday,1,2,0.5,True,178,0.42685851318944845
-Coop Bromsten,Tuesday,1,2,0.5,True,47,0.11270983213429256
-Coop Bromsten,Thursday,2,2,1.0,True,192,0.460431654676259
-Coop Bålsta,Sunday,1,2,0.5,True,74,0.2846153846153846
-Coop Bålsta,Tuesday,1,2,0.5,True,90,0.34615384615384615
-Coop Bålsta,Thursday,2,2,1.0,True,96,0.36923076923076925
-Coop Centralen,Sunday,1,2,0.5,True,287,0.20782041998551773
-Coop Centralen,Tuesday,1,2,0.5,True,344,0.2490948587979725
-Coop Centralen,Thursday,2,2,1.0,True,750,0.5430847212165097
-Coop Ekeby,Sunday,1,2,0.5,True,40,0.15503875968992248
-Coop Ekeby,Tuesday,1,2,0.5,True,88,0.34108527131782945
-Coop Ekeby,Thursday,2,2,1.0,True,130,0.5038759689922481
-Coop Eken,Sunday,1,2,0.5,True,59,0.2822966507177033
-Coop Eken,Tuesday,1,2,0.5,True,56,0.2679425837320574
-Coop Eken,Thursday,2,2,1.0,True,94,0.44976076555023925
-Coop Erik Dahlbersgatan,Sunday,1,2,0.5,True,73,0.27756653992395436
-Coop Erik Dahlbersgatan,Tuesday,1,2,0.5,True,70,0.2661596958174905
-Coop Erik Dahlbersgatan,Thursday,2,2,1.0,True,120,0.45627376425855515
-Coop Folkparken,Sunday,1,2,0.5,True,48,0.23529411764705882
-Coop Folkparken,Tuesday,1,2,0.5,True,52,0.2549019607843137
-Coop Folkparken,Thursday,2,2,1.0,True,104,0.5098039215686274
-Coop GUBBÄNGEN,Sunday,1,2,0.5,True,94,0.31864406779661014
-Coop GUBBÄNGEN,Tuesday,1,2,0.5,True,77,0.26101694915254237
-Coop GUBBÄNGEN,Thursday,2,2,1.0,True,124,0.42033898305084744
-Coop Garnisonen,Sunday,1,2,0.5,True,131,0.3721590909090909
-Coop Garnisonen,Tuesday,1,2,0.5,True,73,0.20738636363636365
-Coop Garnisonen,Thursday,2,2,1.0,True,148,0.42045454545454547
-Coop Hagastaden,Sunday,1,2,0.5,True,56,0.28865979381443296
-Coop Hagastaden,Thursday,2,2,1.0,True,138,0.711340206185567
-Coop Hammarby Sjöstad,Sunday,1,2,0.5,True,52,0.20233463035019456
-Coop Hammarby Sjöstad,Tuesday,1,2,0.5,True,57,0.22178988326848248
-Coop Hammarby Sjöstad,Thursday,2,2,1.0,True,148,0.5758754863813229
-Coop Huddinge,Sunday,1,2,0.5,True,71,0.31981981981981983
-Coop Huddinge,Tuesday,1,2,0.5,True,51,0.22972972972972974
-Coop Huddinge,Thursday,2,2,1.0,True,100,0.45045045045045046
-Coop HÖGDALEN,Sunday,1,2,0.5,True,53,0.2420091324200913
-Coop HÖGDALEN,Tuesday,1,2,0.5,True,46,0.2100456621004566
-Coop HÖGDALEN,Thursday,2,2,1.0,True,120,0.547945205479452
-Coop HÖTORGET,Sunday,1,2,0.5,True,120,0.3
-Coop HÖTORGET,Tuesday,1,2,0.5,True,74,0.185
-Coop HÖTORGET,Thursday,2,2,1.0,True,206,0.515
-Coop Häggvik,Sunday,1,2,0.5,True,68,0.2833333333333333
-Coop Häggvik,Thursday,2,2,1.0,True,172,0.7166666666666667
-Coop Karlfeldtsplatsen,Sunday,1,2,0.5,True,33,0.23741007194244604
-Coop Karlfeldtsplatsen,Tuesday,1,2,0.5,True,28,0.2014388489208633
-Coop Karlfeldtsplatsen,Thursday,2,2,1.0,True,78,0.5611510791366906
-Coop Karlholm,Sunday,1,2,0.5,True,22,0.25287356321839083
-Coop Karlholm,Tuesday,1,2,0.5,True,27,0.3103448275862069
-Coop Karlholm,Thursday,2,2,1.0,True,38,0.4367816091954023
-Coop Konsum hallen,Sunday,1,2,0.5,True,41,0.2411764705882353
-Coop Konsum hallen,Tuesday,1,2,0.5,True,51,0.3
-Coop Konsum hallen,Thursday,2,2,1.0,True,78,0.4588235294117647
-Coop Konsum vendelsömalm,Sunday,1,2,0.5,True,42,0.35
-Coop Konsum vendelsömalm,Tuesday,1,2,0.5,True,30,0.25
-Coop Konsum vendelsömalm,Thursday,2,2,1.0,True,48,0.4
-Coop Korpkulla,Sunday,1,2,0.5,True,94,0.25895316804407714
-Coop Korpkulla,Tuesday,1,2,0.5,True,54,0.1487603305785124
-Coop Korpkulla,Thursday,2,2,1.0,True,215,0.5922865013774105
-Coop Kristineberg,Sunday,1,2,0.5,True,173,0.5474683544303798
-Coop Kristineberg,Tuesday,1,2,0.5,True,55,0.17405063291139242
-Coop Kristineberg,Thursday,2,2,1.0,True,88,0.27848101265822783
-Coop Krysset,Sunday,1,2,0.5,True,29,0.24166666666666667
-Coop Krysset,Tuesday,1,2,0.5,True,39,0.325
-Coop Krysset,Thursday,2,2,1.0,True,52,0.43333333333333335
-Coop Kungsängen,Sunday,1,2,0.5,True,144,0.21524663677130046
-Coop Kungsängen,Tuesday,1,2,0.5,True,107,0.15994020926756353
-Coop Kungsängen,Thursday,2,2,1.0,True,418,0.624813153961136
-Coop Luthagen,Sunday,1,2,0.5,True,36,0.1782178217821782
-Coop Luthagen,Tuesday,1,2,0.5,True,60,0.297029702970297
-Coop Luthagen,Thursday,2,2,1.0,True,106,0.5247524752475248
-Coop Matboden,Sunday,1,2,0.5,True,28,0.5
-Coop Matboden,Tuesday,1,2,0.5,True,28,0.5
-Coop Medborgarplatsen,Sunday,1,2,0.5,True,57,0.3630573248407643
-Coop Medborgarplatsen,Thursday,2,2,1.0,True,100,0.6369426751592356
-Coop Minneberg,Sunday,1,2,0.5,True,202,0.33278418451400327
-Coop Minneberg,Tuesday,1,2,0.5,True,87,0.14332784184514002
-Coop Minneberg,Thursday,2,2,1.0,True,318,0.5238879736408567
-Coop Märsta,Thursday,1,2,0.5,True,307,1.0
-Coop Odengatan,Sunday,1,2,0.5,True,61,0.26991150442477874
-Coop Odengatan,Tuesday,1,2,0.5,True,59,0.2610619469026549
-Coop Odengatan,Thursday,2,2,1.0,True,106,0.4690265486725664
-Coop Odenplan,Sunday,1,2,0.5,True,51,0.2602040816326531
-Coop Odenplan,Tuesday,1,2,0.5,True,43,0.2193877551020408
-Coop Odenplan,Thursday,2,2,1.0,True,102,0.5204081632653061
-Coop Pilgatan,Sunday,1,2,0.5,True,91,0.27492447129909364
-Coop Pilgatan,Tuesday,1,2,0.5,True,50,0.1510574018126888
-Coop Pilgatan,Thursday,2,2,1.0,True,190,0.5740181268882175
-Coop Rotebro,Sunday,1,2,0.5,True,69,0.3770491803278688
-Coop Rotebro,Thursday,2,2,1.0,True,114,0.6229508196721312
-Coop Rådhuset,Sunday,1,2,0.5,True,111,0.30919220055710306
-Coop Rådhuset,Tuesday,1,2,0.5,True,81,0.22562674094707522
-Coop Rådhuset,Thursday,2,2,1.0,True,167,0.46518105849582175
-Coop STORGATAN,Sunday,1,2,0.5,True,105,0.38461538461538464
-Coop STORGATAN,Tuesday,1,2,0.5,True,34,0.12454212454212454
-Coop STORGATAN,Thursday,2,2,1.0,True,134,0.4908424908424908
-Coop Sockenplan,Sunday,1,2,0.5,True,39,0.16956521739130434
-Coop Sockenplan,Tuesday,1,2,0.5,True,55,0.2391304347826087
-Coop Sockenplan,Thursday,2,2,1.0,True,136,0.591304347826087
-Coop Spånga-torg,Sunday,1,2,0.5,True,116,0.4496124031007752
-Coop Spånga-torg,Tuesday,1,2,0.5,True,28,0.10852713178294573
-Coop Spånga-torg,Thursday,2,2,1.0,True,114,0.4418604651162791
-Coop Stjärnan,Sunday,1,2,0.5,True,72,0.3130434782608696
-Coop Stjärnan,Tuesday,1,2,0.5,True,28,0.12173913043478261
-Coop Stjärnan,Thursday,2,2,1.0,True,130,0.5652173913043478
-Coop Storsjövägen,Sunday,1,2,0.5,True,33,0.3142857142857143
-Coop Storsjövägen,Tuesday,1,2,0.5,True,20,0.19047619047619047
-Coop Storsjövägen,Thursday,2,2,1.0,True,52,0.49523809523809526
-Coop Storvreta,Sunday,1,2,0.5,True,46,0.18326693227091634
-Coop Storvreta,Tuesday,1,2,0.5,True,71,0.28286852589641437
-Coop Storvreta,Thursday,2,2,1.0,True,134,0.5338645418326693
-Coop Stuvsta,Sunday,1,2,0.5,True,106,0.4140625
-Coop Stuvsta,Tuesday,1,2,0.5,True,42,0.1640625
-Coop Stuvsta,Thursday,2,2,1.0,True,108,0.421875
-Coop Sundby Park,Sunday,1,2,0.5,True,185,0.3008130081300813
-Coop Sundby Park,Tuesday,1,2,0.5,True,76,0.12357723577235773
-Coop Sundby Park,Thursday,2,2,1.0,True,354,0.5756097560975609
-Coop Sveavägen,Sunday,1,2,0.5,True,151,0.33186813186813185
-Coop Sveavägen,Tuesday,1,2,0.5,True,102,0.22417582417582418
-Coop Sveavägen,Thursday,2,2,1.0,True,202,0.44395604395604393
-Coop Tibble,Sunday,1,2,0.5,True,75,0.2830188679245283
-Coop Tibble,Tuesday,1,2,0.5,True,48,0.1811320754716981
-Coop Tibble,Thursday,2,2,1.0,True,142,0.5358490566037736
-Coop Tierp,Sunday,1,2,0.5,True,32,0.22695035460992907
-Coop Tierp,Tuesday,1,2,0.5,True,35,0.24822695035460993
-Coop Tierp,Thursday,2,2,1.0,True,74,0.524822695035461
-Coop Tomtebogatan,Sunday,1,2,0.5,True,40,0.291970802919708
-Coop Tomtebogatan,Tuesday,1,2,0.5,True,45,0.3284671532846715
-Coop Tomtebogatan,Thursday,2,2,1.0,True,52,0.3795620437956204
-Coop Tranebergsvägen,Sunday,1,2,0.5,True,183,0.329136690647482
-Coop Tranebergsvägen,Tuesday,1,2,0.5,True,73,0.13129496402877697
-Coop Tranebergsvägen,Thursday,2,2,1.0,True,300,0.539568345323741
-Coop Triangeln,Sunday,1,2,0.5,True,40,0.27586206896551724
-Coop Triangeln,Tuesday,1,2,0.5,True,51,0.35172413793103446
-Coop Triangeln,Thursday,2,2,1.0,True,54,0.3724137931034483
-Coop Veckovägen,Sunday,1,2,0.5,True,63,0.4090909090909091
-Coop Veckovägen,Tuesday,1,2,0.5,True,35,0.22727272727272727
-Coop Veckovägen,Thursday,2,2,1.0,True,56,0.36363636363636365
-Coop Västertorg,Sunday,1,2,0.5,True,26,0.18840579710144928
-Coop Västertorg,Tuesday,1,2,0.5,True,30,0.21739130434782608
-Coop Västertorg,Thursday,2,2,1.0,True,82,0.5942028985507246
-Coop Västertorp,Sunday,1,2,0.5,True,51,0.24056603773584906
-Coop Västertorp,Tuesday,1,2,0.5,True,43,0.2028301886792453
-Coop Västertorp,Thursday,2,2,1.0,True,118,0.5566037735849056
-Coop Västerås City(PUNKT),Sunday,1,2,0.5,True,106,0.3202416918429003
-Coop Västerås City(PUNKT),Tuesday,1,2,0.5,True,25,0.0755287009063444
-Coop Västerås City(PUNKT),Thursday,2,2,1.0,True,200,0.6042296072507553
-Coop Zinkensdamm,Sunday,1,2,0.5,True,93,0.24866310160427807
-Coop Zinkensdamm,Tuesday,1,2,0.5,True,91,0.24331550802139038
-Coop Zinkensdamm,Thursday,2,2,1.0,True,190,0.5080213903743316
-Coop björnboda,Sunday,1,2,0.5,True,142,0.40804597701149425
-Coop björnboda,Tuesday,1,2,0.5,True,92,0.26436781609195403
-Coop björnboda,Thursday,2,2,1.0,True,114,0.3275862068965517
-Coop farsta strand,Sunday,1,2,0.5,True,128,0.3368421052631579
-Coop farsta strand,Tuesday,1,2,0.5,True,102,0.26842105263157895
-Coop farsta strand,Thursday,2,2,1.0,True,150,0.39473684210526316
-Coop grindsgatan,Sunday,1,2,0.5,True,26,0.2765957446808511
-Coop grindsgatan,Thursday,2,2,1.0,True,68,0.723404255319149
-Coop hagaström,Sunday,1,2,0.5,True,17,0.37777777777777777
-Coop hagaström,Tuesday,1,2,0.5,True,16,0.35555555555555557
-Coop hagaström,Thursday,2,2,1.0,True,12,0.26666666666666666
-Coop lindingö centrum,Sunday,1,2,0.5,True,201,0.39880952380952384
-Coop lindingö centrum,Tuesday,1,2,0.5,True,109,0.21626984126984128
-Coop lindingö centrum,Thursday,2,2,1.0,True,194,0.38492063492063494
-Coop rönninge,Sunday,1,2,0.5,True,118,0.36419753086419754
-Coop rönninge,Tuesday,1,2,0.5,True,44,0.13580246913580246
-Coop rönninge,Thursday,2,2,1.0,True,162,0.5
-Coop Älvkarleby,Sunday,1,2,0.5,True,44,0.3283582089552239
-Coop Älvkarleby,Tuesday,1,2,0.5,True,38,0.2835820895522388
-Coop Älvkarleby,Thursday,2,2,1.0,True,52,0.3880597014925373
-Coop Älvsjötorg,Sunday,1,2,0.5,True,207,0.4683257918552036
-Coop Älvsjötorg,Tuesday,1,2,0.5,True,69,0.15610859728506787
-Coop Älvsjötorg,Thursday,2,2,1.0,True,166,0.3755656108597285
-Coop Österbybruk,Sunday,1,2,0.5,True,17,0.22666666666666666
-Coop Österbybruk,Tuesday,1,2,0.5,True,38,0.5066666666666667
-Coop Österbybruk,Thursday,2,2,1.0,True,20,0.26666666666666666
-Dressinen,Sunday,1,1,1.0,True,27,1.0
-Drottningskiosken,Sunday,1,2,0.5,True,76,0.296875
-Drottningskiosken,Tuesday,1,2,0.5,True,46,0.1796875
-Drottningskiosken,Thursday,2,2,1.0,True,134,0.5234375
-Flogsta Närlivs,Sunday,1,1,1.0,True,18,1.0
-Handlarn Uppsala,Sunday,1,1,1.0,True,9,1.0
-Hemköp City Västerås,Sunday,1,2,0.5,True,48,0.32
-Hemköp City Västerås,Tuesday,1,2,0.5,True,20,0.13333333333333333
-Hemköp City Västerås,Thursday,2,2,1.0,True,82,0.5466666666666666
-Hemköp Malmaberg,Sunday,1,2,0.5,True,121,0.37577639751552794
-Hemköp Malmaberg,Tuesday,1,2,0.5,True,43,0.13354037267080746
-Hemköp Malmaberg,Thursday,2,2,1.0,True,158,0.4906832298136646
-Hemköp Matpressen,Sunday,1,2,0.5,True,115,0.2818627450980392
-Hemköp Matpressen,Tuesday,1,2,0.5,True,85,0.20833333333333334
-Hemköp Matpressen,Thursday,2,2,1.0,True,208,0.5098039215686274
-Hemköp Scandinavia,Sunday,1,2,0.5,True,80,0.25396825396825395
-Hemköp Scandinavia,Tuesday,1,2,0.5,True,43,0.1365079365079365
-Hemköp Scandinavia,Thursday,2,2,1.0,True,192,0.6095238095238096
-Hemköp Ulriksdal,Sunday,1,2,0.5,True,113,0.38305084745762713
-Hemköp Ulriksdal,Thursday,2,2,1.0,True,182,0.6169491525423729
-Hemköp blackeberg,Sunday,1,2,0.5,True,164,0.4281984334203655
-Hemköp blackeberg,Tuesday,1,2,0.5,True,87,0.22715404699738903
-Hemköp blackeberg,Thursday,2,2,1.0,True,132,0.34464751958224543
-ICA Blecktornet,Sunday,1,2,0.5,True,69,0.276
-ICA Blecktornet,Tuesday,1,2,0.5,True,53,0.212
-ICA Blecktornet,Thursday,2,2,1.0,True,128,0.512
-ICA Bomhus,Sunday,1,2,0.5,True,27,0.225
-ICA Bomhus,Tuesday,1,2,0.5,True,37,0.30833333333333335
-ICA Bomhus,Thursday,2,2,1.0,True,56,0.4666666666666667
-ICA Bromma,Sunday,1,2,0.5,True,234,0.3281907433380084
-ICA Bromma,Tuesday,1,2,0.5,True,75,0.10518934081346423
-ICA Bromma,Thursday,2,2,1.0,True,404,0.5666199158485273
-ICA Dalastan,Sunday,1,2,0.5,True,60,0.44776119402985076
-ICA Dalastan,Thursday,2,2,1.0,True,74,0.5522388059701493
-ICA Essingen,Sunday,1,2,0.5,True,82,0.3106060606060606
-ICA Essingen,Tuesday,1,2,0.5,True,62,0.23484848484848486
-ICA Essingen,Thursday,2,2,1.0,True,120,0.45454545454545453
-ICA Ettan,Sunday,1,2,0.5,True,112,0.3902439024390244
-ICA Ettan,Tuesday,1,2,0.5,True,37,0.1289198606271777
-ICA Ettan,Thursday,2,2,1.0,True,138,0.4808362369337979
-ICA Fridhemsplan,Sunday,1,2,0.5,True,62,0.23754789272030652
-ICA Fridhemsplan,Tuesday,1,2,0.5,True,73,0.2796934865900383
-ICA Fridhemsplan,Thursday,2,2,1.0,True,126,0.4827586206896552
-ICA Glädjen,Sunday,1,2,0.5,True,119,0.34195402298850575
-ICA Glädjen,Tuesday,1,2,0.5,True,91,0.2614942528735632
-ICA Glädjen,Thursday,2,2,1.0,True,138,0.39655172413793105
-ICA Gribbylund,Tuesday,1,2,0.5,True,45,0.33088235294117646
-ICA Gribbylund,Thursday,2,2,1.0,True,91,0.6691176470588235
-ICA Grytan,Sunday,1,2,0.5,True,101,0.24938271604938272
-ICA Grytan,Tuesday,1,2,0.5,True,60,0.14814814814814814
-ICA Grytan,Thursday,2,2,1.0,True,244,0.6024691358024692
-ICA Hagsätra,Sunday,1,2,0.5,True,81,0.2621359223300971
-ICA Hagsätra,Tuesday,1,2,0.5,True,58,0.18770226537216828
-ICA Hagsätra,Thursday,2,2,1.0,True,170,0.5501618122977346
-ICA Högalid,Sunday,1,2,0.5,True,79,0.23867069486404835
-ICA Högalid,Tuesday,1,2,0.5,True,90,0.2719033232628399
-ICA Högalid,Thursday,2,2,1.0,True,162,0.48942598187311176
-ICA Hökåsen,Sunday,1,2,0.5,True,41,0.271523178807947
-ICA Hökåsen,Tuesday,1,2,0.5,True,22,0.1456953642384106
-ICA Hökåsen,Thursday,2,2,1.0,True,88,0.5827814569536424
-ICA Hörnan,Sunday,1,2,0.5,True,77,0.3117408906882591
-ICA Hörnan,Tuesday,1,2,0.5,True,50,0.20242914979757085
-ICA Hörnan,Thursday,2,2,1.0,True,120,0.48582995951417
-ICA Mathörnan,Sunday,1,2,0.5,True,37,0.38144329896907214
-ICA Mathörnan,Thursday,2,2,1.0,True,60,0.6185567010309279
-ICA Myran Danderyd,Sunday,1,2,0.5,True,42,0.3684210526315789
-ICA Myran Danderyd,Thursday,2,2,1.0,True,72,0.631578947368421
-ICA Norrviken,Sunday,1,2,0.5,True,96,0.3902439024390244
-ICA Norrviken,Thursday,2,2,1.0,True,150,0.6097560975609756
-ICA Nära Gärdet,Sunday,1,2,0.5,True,102,0.2779291553133515
-ICA Nära Gärdet,Tuesday,1,2,0.5,True,97,0.26430517711171664
-ICA Nära Gärdet,Thursday,2,2,1.0,True,168,0.45776566757493187
-ICA Nära Lindholmen,Sunday,1,2,0.5,True,94,0.34306569343065696
-ICA Nära Lindholmen,Thursday,2,2,1.0,True,180,0.656934306569343
-ICA Nära Roslagstull,Sunday,1,2,0.5,True,62,0.23484848484848486
-ICA Nära Roslagstull,Tuesday,1,2,0.5,True,58,0.2196969696969697
-ICA Nära Roslagstull,Thursday,2,2,1.0,True,144,0.5454545454545454
-ICA Nära Stuvsta,Sunday,1,2,0.5,True,38,0.25333333333333335
-ICA Nära Stuvsta,Tuesday,1,2,0.5,True,22,0.14666666666666667
-ICA Nära Stuvsta,Thursday,2,2,1.0,True,90,0.6
-ICA Nära Söderhöjden,Sunday,1,2,0.5,True,62,0.4397163120567376
-ICA Nära Söderhöjden,Tuesday,1,2,0.5,True,39,0.2765957446808511
-ICA Nära Söderhöjden,Thursday,2,2,1.0,True,40,0.28368794326241137
-ICA Nära Årsta,Sunday,1,2,0.5,True,31,0.21232876712328766
-ICA Nära Årsta,Tuesday,1,2,0.5,True,31,0.21232876712328766
-ICA Nära Årsta,Thursday,2,2,1.0,True,84,0.5753424657534246
-ICA RAPID,Sunday,1,2,0.5,True,65,0.18005540166204986
-ICA RAPID,Tuesday,1,2,0.5,True,70,0.19390581717451524
-ICA RAPID,Thursday,2,2,1.0,True,226,0.6260387811634349
-ICA Råby,Sunday,1,2,0.5,True,56,0.345679012345679
-ICA Råby,Tuesday,1,2,0.5,True,10,0.06172839506172839
-ICA Råby,Thursday,2,2,1.0,True,96,0.5925925925925926
-ICA Rökubbsgatan,Sunday,1,2,0.5,True,90,0.29900332225913623
-ICA Rökubbsgatan,Tuesday,1,2,0.5,True,83,0.2757475083056478
-ICA Rökubbsgatan,Thursday,2,2,1.0,True,128,0.42524916943521596
-ICA SAMköp,Sunday,1,2,0.5,True,50,0.15673981191222572
-ICA SAMköp,Tuesday,1,2,0.5,True,99,0.3103448275862069
-ICA SAMköp,Thursday,2,2,1.0,True,170,0.5329153605015674
-ICA SKiljebo,Sunday,1,2,0.5,True,53,0.2548076923076923
-ICA SKiljebo,Tuesday,1,2,0.5,True,11,0.052884615384615384
-ICA SKiljebo,Thursday,2,2,1.0,True,144,0.6923076923076923
-ICA Sigma,Sunday,1,2,0.5,True,68,0.3119266055045872
-ICA Sigma,Thursday,2,2,1.0,True,150,0.6880733944954128
-ICA Spegeln,Sunday,1,2,0.5,True,54,0.12735849056603774
-ICA Spegeln,Tuesday,1,2,0.5,True,148,0.3490566037735849
-ICA Spegeln,Thursday,2,2,1.0,True,222,0.5235849056603774
-ICA Spånga,Sunday,1,2,0.5,True,72,0.26666666666666666
-ICA Spånga,Tuesday,1,2,0.5,True,70,0.25925925925925924
-ICA Spånga,Thursday,2,2,1.0,True,128,0.4740740740740741
-ICA Stormarknad Botkyrka,Sunday,1,2,0.5,True,184,0.2857142857142857
-ICA Stormarknad Botkyrka,Tuesday,1,2,0.5,True,124,0.19254658385093168
-ICA Stormarknad Botkyrka,Thursday,2,2,1.0,True,336,0.5217391304347826
-ICA Stortorget,Sunday,1,2,0.5,True,65,0.32663316582914576
-ICA Stortorget,Tuesday,1,2,0.5,True,56,0.2814070351758794
-ICA Stortorget,Thursday,2,2,1.0,True,78,0.39195979899497485
-ICA Storvreta,Sunday,1,2,0.5,True,19,0.2235294117647059
-ICA Storvreta,Tuesday,1,2,0.5,True,34,0.4
-ICA Storvreta,Thursday,2,2,1.0,True,32,0.3764705882352941
-ICA Supermarket Husby,Sunday,1,2,0.5,True,37,0.46835443037974683
-ICA Supermarket Husby,Tuesday,1,2,0.5,True,8,0.10126582278481013
-ICA Supermarket Husby,Thursday,2,2,1.0,True,34,0.43037974683544306
-ICA Supermarket Högdalen,Sunday,1,2,0.5,True,59,0.20848056537102475
-ICA Supermarket Högdalen,Tuesday,1,2,0.5,True,72,0.254416961130742
-ICA Supermarket Högdalen,Thursday,2,2,1.0,True,152,0.5371024734982333
-ICA Supermarket Vårberg c,Sunday,1,2,0.5,True,139,0.44551282051282054
-ICA Supermarket Vårberg c,Tuesday,1,2,0.5,True,35,0.11217948717948718
-ICA Supermarket Vårberg c,Thursday,2,2,1.0,True,138,0.4423076923076923
-ICA Supermarket käppala,Sunday,1,2,0.5,True,206,0.4449244060475162
-ICA Supermarket käppala,Tuesday,1,2,0.5,True,191,0.41252699784017277
-ICA Supermarket käppala,Thursday,2,2,1.0,True,66,0.14254859611231102
-ICA Supermarket solbo,Sunday,1,2,0.5,True,47,0.26256983240223464
-ICA Supermarket solbo,Tuesday,1,2,0.5,True,50,0.27932960893854747
-ICA Supermarket solbo,Thursday,2,2,1.0,True,82,0.4581005586592179
-ICA Supermarket västerhaninge,Sunday,1,2,0.5,True,35,0.2348993288590604
-ICA Supermarket västerhaninge,Tuesday,1,2,0.5,True,28,0.18791946308724833
-ICA Supermarket västerhaninge,Thursday,2,2,1.0,True,86,0.5771812080536913
-ICA Sävja,Sunday,1,2,0.5,True,94,0.29283489096573206
-ICA Sävja,Tuesday,1,2,0.5,True,95,0.29595015576323985
-ICA Sävja,Thursday,2,2,1.0,True,132,0.411214953271028
-ICA Söder,Sunday,1,2,0.5,True,27,0.1836734693877551
-ICA Söder,Tuesday,1,2,0.5,True,41,0.2789115646258503
-ICA Söder,Thursday,2,2,1.0,True,79,0.5374149659863946
-ICA Södra Station,Sunday,1,2,0.5,True,82,0.24773413897280966
-ICA Södra Station,Tuesday,1,2,0.5,True,87,0.2628398791540785
-ICA Södra Station,Thursday,2,2,1.0,True,162,0.48942598187311176
-ICA Torgkassen,Sunday,1,2,0.5,True,68,0.2786885245901639
-ICA Torgkassen,Tuesday,1,2,0.5,True,54,0.22131147540983606
-ICA Torgkassen,Thursday,2,2,1.0,True,122,0.5
-ICA Viksäng,Sunday,1,2,0.5,True,121,0.4275618374558304
-ICA Viksäng,Tuesday,1,2,0.5,True,38,0.13427561837455831
-ICA Viksäng,Thursday,2,2,1.0,True,124,0.4381625441696113
-ICA Vretgränd,Sunday,1,2,0.5,True,72,0.17266187050359713
-ICA Vretgränd,Tuesday,1,2,0.5,True,115,0.27577937649880097
-ICA Vretgränd,Thursday,2,2,1.0,True,230,0.5515587529976019
-ICA Väst,Sunday,1,2,0.5,True,142,0.31277533039647576
-ICA Väst,Tuesday,1,2,0.5,True,74,0.16299559471365638
-ICA Väst,Thursday,2,2,1.0,True,238,0.5242290748898678
-ICA kvantum Danderyd,Sunday,1,2,0.5,True,128,0.375366568914956
-ICA kvantum Danderyd,Tuesday,1,2,0.5,True,77,0.22580645161290322
-ICA kvantum Danderyd,Thursday,2,2,1.0,True,136,0.39882697947214074
-ICA kvantum Lidingö,Sunday,1,2,0.5,True,58,0.36942675159235666
-ICA kvantum Lidingö,Tuesday,1,2,0.5,True,35,0.2229299363057325
-ICA kvantum Lidingö,Thursday,2,2,1.0,True,64,0.40764331210191085
-ICA kvantum Viksjö,Sunday,1,2,0.5,True,87,0.2909698996655518
-ICA kvantum Viksjö,Tuesday,1,2,0.5,True,80,0.26755852842809363
-ICA kvantum Viksjö,Thursday,2,2,1.0,True,132,0.4414715719063545
-ICA kvantum åkermyntan,Sunday,1,2,0.5,True,28,0.3111111111111111
-ICA kvantum åkermyntan,Thursday,2,2,1.0,True,62,0.6888888888888889
-ICA lappkärrsberget,Sunday,1,2,0.5,True,46,0.31724137931034485
-ICA lappkärrsberget,Thursday,2,2,1.0,True,99,0.6827586206896552
-ICA maxi Häggvik,Sunday,1,2,0.5,True,207,0.24701670644391407
-ICA maxi Häggvik,Tuesday,1,2,0.5,True,180,0.21479713603818615
-ICA maxi Häggvik,Thursday,2,2,1.0,True,451,0.5381861575178998
-ICA nära Per-Erics livs,Sunday,1,2,0.5,True,25,0.16025641025641027
-ICA nära Per-Erics livs,Tuesday,1,2,0.5,True,53,0.33974358974358976
-ICA nära Per-Erics livs,Thursday,2,2,1.0,True,78,0.5
-ICA nära Vårby gård,Sunday,1,2,0.5,True,93,0.4492753623188406
-ICA nära Vårby gård,Tuesday,1,2,0.5,True,46,0.2222222222222222
-ICA nära Vårby gård,Thursday,2,2,1.0,True,68,0.3285024154589372
-ICA supermarket Heby,Sunday,1,2,0.5,True,17,0.027331189710610933
-ICA supermarket Heby,Tuesday,1,2,0.5,True,179,0.2877813504823151
-ICA supermarket Heby,Thursday,2,2,1.0,True,426,0.684887459807074
-ICA supermarket bagarmossen,Sunday,1,2,0.5,True,63,0.2903225806451613
-ICA supermarket bagarmossen,Tuesday,1,2,0.5,True,32,0.14746543778801843
-ICA supermarket bagarmossen,Thursday,2,2,1.0,True,122,0.5622119815668203
-ICA Örbyhus,Sunday,1,2,0.5,True,75,0.26501766784452296
-ICA Örbyhus,Tuesday,1,2,0.5,True,62,0.21908127208480566
-ICA Örbyhus,Thursday,2,2,1.0,True,146,0.5159010600706714
-Lilla Coop Kungsängen,Sunday,1,2,0.5,True,206,0.42213114754098363
-Lilla Coop Kungsängen,Tuesday,1,2,0.5,True,66,0.13524590163934427
-Lilla Coop Kungsängen,Thursday,2,2,1.0,True,216,0.4426229508196721
-Myway Danderyd,Sunday,1,1,1.0,True,69,1.0
-Myway Råbyvägen,Sunday,1,1,1.0,True,24,1.0
-Myway Södra Station,Sunday,1,2,0.5,True,43,0.30714285714285716
-Myway Södra Station,Tuesday,1,2,0.5,True,33,0.2357142857142857
-Myway Södra Station,Thursday,2,2,1.0,True,64,0.45714285714285713
-Myway Torget,Sunday,1,1,1.0,True,18,1.0
-Nelins,Sunday,1,2,0.5,True,83,0.2634920634920635
-Nelins,Tuesday,1,2,0.5,True,78,0.24761904761904763
-Nelins,Thursday,2,2,1.0,True,154,0.4888888888888889
+Coop  SVANDAMMSPLAN,Sunday,2,2,1.0,True,70,0.5035971223021583
+Coop  SVANDAMMSPLAN,Tuesday,1,2,0.5,True,30,0.2158273381294964
+Coop  SVANDAMMSPLAN,Thursday,1,2,0.5,True,39,0.2805755395683453
+Coop Almunge,Sunday,2,2,1.0,True,44,0.3793103448275862
+Coop Almunge,Tuesday,1,2,0.5,True,45,0.3879310344827586
+Coop Almunge,Thursday,1,2,0.5,True,27,0.23275862068965517
+Coop Bagarmossen,Sunday,2,2,1.0,True,180,0.5714285714285714
+Coop Bagarmossen,Tuesday,1,2,0.5,True,70,0.2222222222222222
+Coop Bagarmossen,Thursday,1,2,0.5,True,65,0.20634920634920634
+Coop Barkarby,Sunday,2,2,1.0,True,66,0.36464088397790057
+Coop Barkarby,Tuesday,1,2,0.5,True,29,0.16022099447513813
+Coop Barkarby,Thursday,1,2,0.5,True,86,0.47513812154696133
+Coop Bergshamra,Sunday,2,2,1.0,True,138,0.5847457627118644
+Coop Bergshamra,Tuesday,1,2,0.5,True,52,0.22033898305084745
+Coop Bergshamra,Thursday,1,2,0.5,True,46,0.19491525423728814
+Coop Björkhagen,Sunday,2,2,1.0,True,122,0.6594594594594595
+Coop Björkhagen,Tuesday,1,2,0.5,True,63,0.34054054054054056
+Coop Bondegatan,Sunday,2,2,1.0,True,118,0.5388127853881278
+Coop Bondegatan,Tuesday,1,2,0.5,True,47,0.2146118721461187
+Coop Bondegatan,Thursday,1,2,0.5,True,54,0.2465753424657534
+Coop Bredden,Sunday,2,2,1.0,True,154,0.5724907063197026
+Coop Bredden,Tuesday,1,2,0.5,True,24,0.08921933085501858
+Coop Bredden,Thursday,1,2,0.5,True,91,0.3382899628252788
+Coop Brommaplan,Sunday,2,2,1.0,True,86,0.5341614906832298
+Coop Brommaplan,Tuesday,1,2,0.5,True,75,0.4658385093167702
+Coop Bromsten,Sunday,2,2,1.0,True,178,0.6379928315412187
+Coop Bromsten,Tuesday,1,2,0.5,True,43,0.15412186379928317
+Coop Bromsten,Thursday,1,2,0.5,True,58,0.2078853046594982
+Coop Bålsta,Monday,1,1,1.0,True,88,0.5569620253164557
+Coop Bålsta,Wednesday,1,1,1.0,True,48,0.3037974683544304
+Coop Bålsta,Friday,1,1,1.0,True,22,0.13924050632911392
+Coop Centralen,Sunday,2,2,1.0,True,514,0.49186602870813395
+Coop Centralen,Tuesday,1,2,0.5,True,277,0.26507177033492824
+Coop Centralen,Thursday,1,2,0.5,True,254,0.2430622009569378
+Coop Ekeby,Sunday,2,2,1.0,True,194,0.6024844720496895
+Coop Ekeby,Tuesday,1,2,0.5,True,75,0.2329192546583851
+Coop Ekeby,Thursday,1,2,0.5,True,53,0.16459627329192547
+Coop Eken,Sunday,2,2,1.0,True,80,0.44692737430167595
+Coop Eken,Tuesday,1,2,0.5,True,45,0.25139664804469275
+Coop Eken,Thursday,1,2,0.5,True,54,0.3016759776536313
+Coop Erik Dahlbersgatan,Sunday,2,2,1.0,True,164,0.6007326007326007
+Coop Erik Dahlbersgatan,Tuesday,1,2,0.5,True,56,0.20512820512820512
+Coop Erik Dahlbersgatan,Thursday,1,2,0.5,True,53,0.19413919413919414
+Coop Folkparken,Sunday,2,2,1.0,True,92,0.46464646464646464
+Coop Folkparken,Tuesday,1,2,0.5,True,55,0.2777777777777778
+Coop Folkparken,Thursday,1,2,0.5,True,51,0.25757575757575757
+Coop GUBBÄNGEN,Sunday,2,2,1.0,True,108,0.484304932735426
+Coop GUBBÄNGEN,Tuesday,1,2,0.5,True,56,0.25112107623318386
+Coop GUBBÄNGEN,Thursday,1,2,0.5,True,59,0.2645739910313901
+Coop Garnisonen,Sunday,2,2,1.0,True,244,0.6834733893557423
+Coop Garnisonen,Tuesday,1,2,0.5,True,51,0.14285714285714285
+Coop Garnisonen,Thursday,1,2,0.5,True,62,0.17366946778711484
+Coop Hagastaden,Sunday,2,2,1.0,True,104,0.6081871345029239
+Coop Hagastaden,Thursday,1,2,0.5,True,67,0.391812865497076
+Coop Hammarby Sjöstad,Sunday,2,2,1.0,True,110,0.48034934497816595
+Coop Hammarby Sjöstad,Tuesday,1,2,0.5,True,55,0.24017467248908297
+Coop Hammarby Sjöstad,Thursday,1,2,0.5,True,64,0.2794759825327511
+Coop Huddinge,Sunday,2,2,1.0,True,114,0.5786802030456852
+Coop Huddinge,Tuesday,1,2,0.5,True,44,0.2233502538071066
+Coop Huddinge,Thursday,1,2,0.5,True,39,0.19796954314720813
+Coop HÖGDALEN,Sunday,2,2,1.0,True,114,0.5352112676056338
+Coop HÖGDALEN,Tuesday,1,2,0.5,True,49,0.2300469483568075
+Coop HÖGDALEN,Thursday,1,2,0.5,True,50,0.2347417840375587
+Coop HÖTORGET,Sunday,2,2,1.0,True,240,0.6185567010309279
+Coop HÖTORGET,Tuesday,1,2,0.5,True,69,0.17783505154639176
+Coop HÖTORGET,Thursday,1,2,0.5,True,79,0.2036082474226804
+Coop Häggvik,Sunday,2,2,1.0,True,132,0.6139534883720931
+Coop Häggvik,Thursday,1,2,0.5,True,83,0.386046511627907
+Coop Karlfeldtsplatsen,Sunday,2,2,1.0,True,66,0.42857142857142855
+Coop Karlfeldtsplatsen,Tuesday,1,2,0.5,True,30,0.19480519480519481
+Coop Karlfeldtsplatsen,Thursday,1,2,0.5,True,58,0.37662337662337664
+Coop Karlholm,Sunday,2,2,1.0,True,58,0.6373626373626373
+Coop Karlholm,Tuesday,1,2,0.5,True,33,0.3626373626373626
+Coop Konsum hallen,Sunday,2,2,1.0,True,82,0.47398843930635837
+Coop Konsum hallen,Tuesday,1,2,0.5,True,55,0.3179190751445087
+Coop Konsum hallen,Thursday,1,2,0.5,True,36,0.20809248554913296
+Coop Konsum vendelsömalm,Monday,1,1,1.0,True,51,0.4857142857142857
+Coop Konsum vendelsömalm,Wednesday,1,1,1.0,True,43,0.4095238095238095
+Coop Konsum vendelsömalm,Friday,1,1,1.0,True,11,0.10476190476190476
+Coop Korpkulla,Sunday,2,2,1.0,True,120,0.4013377926421405
+Coop Korpkulla,Tuesday,1,2,0.5,True,78,0.2608695652173913
+Coop Korpkulla,Thursday,1,2,0.5,True,101,0.3377926421404682
+Coop Kristineberg,Sunday,2,2,1.0,True,126,0.6116504854368932
+Coop Kristineberg,Tuesday,1,2,0.5,True,34,0.1650485436893204
+Coop Kristineberg,Thursday,1,2,0.5,True,46,0.22330097087378642
+Coop Krysset,Sunday,2,2,1.0,True,66,0.5116279069767442
+Coop Krysset,Tuesday,1,2,0.5,True,38,0.29457364341085274
+Coop Krysset,Thursday,1,2,0.5,True,25,0.1937984496124031
+Coop Kungsängen,Sunday,2,2,1.0,True,206,0.5392670157068062
+Coop Kungsängen,Tuesday,1,2,0.5,True,76,0.19895287958115182
+Coop Kungsängen,Thursday,1,2,0.5,True,100,0.2617801047120419
+Coop Luthagen,Sunday,2,2,1.0,True,64,0.2882882882882883
+Coop Luthagen,Tuesday,1,2,0.5,True,85,0.38288288288288286
+Coop Luthagen,Thursday,1,2,0.5,True,73,0.32882882882882886
+Coop Matboden,Sunday,2,2,1.0,True,100,0.7518796992481203
+Coop Matboden,Tuesday,1,2,0.5,True,33,0.24812030075187969
+Coop Medborgarplatsen,Sunday,2,2,1.0,True,114,0.6867469879518072
+Coop Medborgarplatsen,Thursday,1,2,0.5,True,52,0.3132530120481928
+Coop Minneberg,Sunday,2,2,1.0,True,68,0.2073170731707317
+Coop Minneberg,Tuesday,1,2,0.5,True,100,0.3048780487804878
+Coop Minneberg,Thursday,1,2,0.5,True,160,0.4878048780487805
+Coop Märsta,Sunday,2,2,1.0,True,334,0.5430894308943089
+Coop Märsta,Tuesday,1,2,0.5,True,135,0.21951219512195122
+Coop Märsta,Thursday,1,2,0.5,True,146,0.23739837398373984
+Coop Odengatan,Sunday,2,2,1.0,True,126,0.5228215767634855
+Coop Odengatan,Tuesday,1,2,0.5,True,59,0.24481327800829875
+Coop Odengatan,Thursday,1,2,0.5,True,56,0.23236514522821577
+Coop Odenplan,Sunday,2,2,1.0,True,134,0.575107296137339
+Coop Odenplan,Tuesday,1,2,0.5,True,49,0.21030042918454936
+Coop Odenplan,Thursday,1,2,0.5,True,50,0.2145922746781116
+Coop Pilgatan,Sunday,2,2,1.0,True,190,0.5864197530864198
+Coop Pilgatan,Tuesday,1,2,0.5,True,40,0.12345679012345678
+Coop Pilgatan,Thursday,1,2,0.5,True,94,0.29012345679012347
+Coop Rotebro,Sunday,2,2,1.0,True,130,0.6632653061224489
+Coop Rotebro,Thursday,1,2,0.5,True,66,0.336734693877551
+Coop Rådhuset,Sunday,2,2,1.0,True,196,0.5781710914454278
+Coop Rådhuset,Tuesday,1,2,0.5,True,67,0.1976401179941003
+Coop Rådhuset,Thursday,1,2,0.5,True,76,0.22418879056047197
+Coop STORGATAN,Sunday,2,2,1.0,True,244,0.5965770171149144
+Coop STORGATAN,Tuesday,1,2,0.5,True,67,0.16381418092909536
+Coop STORGATAN,Thursday,1,2,0.5,True,98,0.2396088019559902
+Coop Sockenplan,Sunday,2,2,1.0,True,88,0.41904761904761906
+Coop Sockenplan,Tuesday,1,2,0.5,True,60,0.2857142857142857
+Coop Sockenplan,Thursday,1,2,0.5,True,62,0.29523809523809524
+Coop Spånga-torg,Sunday,2,2,1.0,True,88,0.5866666666666667
+Coop Spånga-torg,Tuesday,1,2,0.5,True,25,0.16666666666666666
+Coop Spånga-torg,Thursday,1,2,0.5,True,37,0.24666666666666667
+Coop Stjärnan,Sunday,2,2,1.0,True,130,0.6132075471698113
+Coop Stjärnan,Tuesday,1,2,0.5,True,25,0.1179245283018868
+Coop Stjärnan,Thursday,1,2,0.5,True,57,0.2688679245283019
+Coop Storsjövägen,Sunday,2,2,1.0,True,56,0.4307692307692308
+Coop Storsjövägen,Tuesday,1,2,0.5,True,35,0.2692307692307692
+Coop Storsjövägen,Thursday,1,2,0.5,True,39,0.3
+Coop Storvreta,Sunday,2,2,1.0,True,56,0.27053140096618356
+Coop Storvreta,Tuesday,1,2,0.5,True,88,0.4251207729468599
+Coop Storvreta,Thursday,1,2,0.5,True,63,0.30434782608695654
+Coop Stuvsta,Sunday,2,2,1.0,True,126,0.5779816513761468
+Coop Stuvsta,Tuesday,1,2,0.5,True,41,0.18807339449541285
+Coop Stuvsta,Thursday,1,2,0.5,True,51,0.23394495412844038
+Coop Sundby Park,Sunday,2,2,1.0,True,200,0.45662100456621
+Coop Sundby Park,Tuesday,1,2,0.5,True,121,0.2762557077625571
+Coop Sundby Park,Thursday,1,2,0.5,True,117,0.2671232876712329
+Coop Sveavägen,Sunday,2,2,1.0,True,328,0.5754385964912281
+Coop Sveavägen,Tuesday,1,2,0.5,True,105,0.18421052631578946
+Coop Sveavägen,Thursday,1,2,0.5,True,137,0.24035087719298245
+Coop Tibble,Sunday,2,2,1.0,True,60,0.6185567010309279
+Coop Tibble,Tuesday,1,2,0.5,True,16,0.16494845360824742
+Coop Tibble,Thursday,1,2,0.5,True,21,0.21649484536082475
+Coop Tierp,Sunday,2,2,1.0,True,68,0.43312101910828027
+Coop Tierp,Tuesday,1,2,0.5,True,48,0.3057324840764331
+Coop Tierp,Thursday,1,2,0.5,True,41,0.2611464968152866
+Coop Tomtebogatan,Sunday,2,2,1.0,True,86,0.5149700598802395
+Coop Tomtebogatan,Tuesday,1,2,0.5,True,42,0.25149700598802394
+Coop Tomtebogatan,Thursday,1,2,0.5,True,39,0.23353293413173654
+Coop Tranebergsvägen,Sunday,2,2,1.0,True,50,0.211864406779661
+Coop Tranebergsvägen,Tuesday,1,2,0.5,True,34,0.1440677966101695
+Coop Tranebergsvägen,Thursday,1,2,0.5,True,152,0.6440677966101694
+Coop Triangeln,Sunday,2,2,1.0,True,78,0.484472049689441
+Coop Triangeln,Tuesday,1,2,0.5,True,53,0.32919254658385094
+Coop Triangeln,Thursday,1,2,0.5,True,30,0.18633540372670807
+Coop Tungelsta,Monday,1,1,1.0,True,48,0.22018348623853212
+Coop Tungelsta,Wednesday,1,1,1.0,True,107,0.4908256880733945
+Coop Tungelsta,Friday,1,1,1.0,True,63,0.2889908256880734
+Coop Tyresö centrum,Monday,1,1,1.0,True,123,0.634020618556701
+Coop Tyresö centrum,Wednesday,1,1,1.0,True,56,0.28865979381443296
+Coop Tyresö centrum,Friday,1,1,1.0,True,15,0.07731958762886598
+Coop Tyresö strand,Monday,1,1,1.0,True,63,0.63
+Coop Tyresö strand,Wednesday,1,1,1.0,True,21,0.21
+Coop Tyresö strand,Friday,1,1,1.0,True,16,0.16
+Coop Veckovägen,Sunday,2,2,1.0,True,52,0.36879432624113473
+Coop Veckovägen,Tuesday,1,2,0.5,True,63,0.44680851063829785
+Coop Veckovägen,Thursday,1,2,0.5,True,26,0.18439716312056736
+Coop Västerhaninge,Monday,1,1,1.0,True,68,0.3469387755102041
+Coop Västerhaninge,Wednesday,1,1,1.0,True,85,0.4336734693877551
+Coop Västerhaninge,Friday,1,1,1.0,True,43,0.2193877551020408
+Coop Västertorg,Sunday,2,2,1.0,True,56,0.36363636363636365
+Coop Västertorg,Tuesday,1,2,0.5,True,41,0.2662337662337662
+Coop Västertorg,Thursday,1,2,0.5,True,57,0.37012987012987014
+Coop Västertorp,Sunday,2,2,1.0,True,106,0.5023696682464455
+Coop Västertorp,Tuesday,1,2,0.5,True,45,0.2132701421800948
+Coop Västertorp,Thursday,1,2,0.5,True,60,0.2843601895734597
+Coop Västerås City(PUNKT),Sunday,2,2,1.0,True,244,0.6541554959785523
+Coop Västerås City(PUNKT),Tuesday,1,2,0.5,True,40,0.10723860589812333
+Coop Västerås City(PUNKT),Thursday,1,2,0.5,True,89,0.2386058981233244
+Coop Zinkensdamm,Sunday,2,2,1.0,True,184,0.5168539325842697
+Coop Zinkensdamm,Tuesday,1,2,0.5,True,84,0.23595505617977527
+Coop Zinkensdamm,Thursday,1,2,0.5,True,88,0.24719101123595505
+Coop björnboda,Sunday,2,2,1.0,True,90,0.3488372093023256
+Coop björnboda,Tuesday,1,2,0.5,True,85,0.32945736434108525
+Coop björnboda,Thursday,1,2,0.5,True,83,0.32170542635658916
+Coop farsta strand,Sunday,2,2,1.0,True,230,0.5958549222797928
+Coop farsta strand,Tuesday,1,2,0.5,True,67,0.17357512953367876
+Coop farsta strand,Thursday,1,2,0.5,True,89,0.23056994818652848
+Coop grindsgatan,Sunday,2,2,1.0,True,74,0.7184466019417476
+Coop grindsgatan,Thursday,1,2,0.5,True,29,0.2815533980582524
+Coop hagaström,Sunday,2,2,1.0,True,74,0.74
+Coop hagaström,Thursday,1,2,0.5,True,26,0.26
+Coop lindingö centrum,Sunday,2,2,1.0,True,392,0.6479338842975206
+Coop lindingö centrum,Tuesday,1,2,0.5,True,105,0.17355371900826447
+Coop lindingö centrum,Thursday,1,2,0.5,True,108,0.17851239669421487
+Coop rönninge,Sunday,2,2,1.0,True,104,0.5652173913043478
+Coop rönninge,Tuesday,1,2,0.5,True,34,0.18478260869565216
+Coop rönninge,Thursday,1,2,0.5,True,46,0.25
+Coop västra skogen,Monday,1,1,1.0,True,137,0.6171171171171171
+Coop västra skogen,Wednesday,1,1,1.0,True,59,0.26576576576576577
+Coop västra skogen,Friday,1,1,1.0,True,26,0.11711711711711711
+Coop Älvkarleby,Sunday,2,2,1.0,True,72,0.6923076923076923
+Coop Älvkarleby,Tuesday,1,2,0.5,True,32,0.3076923076923077
+Coop Älvsjötorg,Sunday,2,2,1.0,True,264,0.616822429906542
+Coop Älvsjötorg,Tuesday,1,2,0.5,True,70,0.16355140186915887
+Coop Älvsjötorg,Thursday,1,2,0.5,True,94,0.21962616822429906
+Coop Österbybruk,Tuesday,1,1,1.0,True,37,0.6271186440677966
+Coop Österbybruk,Thursday,1,1,1.0,True,22,0.3728813559322034
+Dressinen,Sunday,2,2,1.0,True,54,1.0
+Drottningskiosken,Sunday,2,2,1.0,True,210,0.5585106382978723
+Drottningskiosken,Tuesday,1,2,0.5,True,95,0.2526595744680851
+Drottningskiosken,Thursday,1,2,0.5,True,71,0.18882978723404256
+Flogsta Närlivs,Sunday,2,2,1.0,True,78,1.0
+Handlarn Uppsala,Sunday,2,2,1.0,True,18,1.0
+Hemköp City Västerås,Sunday,2,2,1.0,True,122,0.6931818181818182
+Hemköp City Västerås,Tuesday,1,2,0.5,True,7,0.03977272727272727
+Hemköp City Västerås,Thursday,1,2,0.5,True,47,0.26704545454545453
+Hemköp Malmaberg,Sunday,2,2,1.0,True,276,0.6039387308533917
+Hemköp Malmaberg,Tuesday,1,2,0.5,True,58,0.12691466083150985
+Hemköp Malmaberg,Thursday,1,2,0.5,True,123,0.26914660831509846
+Hemköp Matpressen,Sunday,2,2,1.0,True,228,0.5302325581395348
+Hemköp Matpressen,Tuesday,1,2,0.5,True,97,0.2255813953488372
+Hemköp Matpressen,Thursday,1,2,0.5,True,105,0.2441860465116279
+Hemköp Scandinavia,Sunday,2,2,1.0,True,110,0.6666666666666666
+Hemköp Scandinavia,Thursday,1,2,0.5,True,55,0.3333333333333333
+Hemköp Tyresö Krusboda,Monday,1,1,1.0,True,49,0.532608695652174
+Hemköp Tyresö Krusboda,Wednesday,1,1,1.0,True,31,0.33695652173913043
+Hemköp Tyresö Krusboda,Friday,1,1,1.0,True,12,0.13043478260869565
+Hemköp Tyresö granängsringen,Monday,1,1,1.0,True,84,0.711864406779661
+Hemköp Tyresö granängsringen,Wednesday,1,1,1.0,True,23,0.19491525423728814
+Hemköp Tyresö granängsringen,Friday,1,1,1.0,True,11,0.09322033898305085
+Hemköp Ulriksdal,Sunday,2,2,1.0,True,220,0.7142857142857143
+Hemköp Ulriksdal,Thursday,1,2,0.5,True,88,0.2857142857142857
+Hemköp Vega,Monday,1,1,1.0,True,67,0.3701657458563536
+Hemköp Vega,Wednesday,1,1,1.0,True,90,0.4972375690607735
+Hemköp Vega,Friday,1,1,1.0,True,24,0.13259668508287292
+Hemköp blackeberg,Sunday,2,2,1.0,True,48,0.21428571428571427
+Hemköp blackeberg,Tuesday,1,2,0.5,True,81,0.36160714285714285
+Hemköp blackeberg,Thursday,1,2,0.5,True,95,0.42410714285714285
+ICA Blecktornet,Sunday,2,2,1.0,True,160,0.5818181818181818
+ICA Blecktornet,Tuesday,1,2,0.5,True,52,0.1890909090909091
+ICA Blecktornet,Thursday,1,2,0.5,True,63,0.2290909090909091
+ICA Bomhus,Sunday,2,2,1.0,True,66,0.5116279069767442
+ICA Bomhus,Tuesday,1,2,0.5,True,37,0.2868217054263566
+ICA Bomhus,Thursday,1,2,0.5,True,26,0.20155038759689922
+ICA Bromma,Sunday,2,2,1.0,True,174,0.5087719298245614
+ICA Bromma,Tuesday,1,2,0.5,True,102,0.2982456140350877
+ICA Bromma,Thursday,1,2,0.5,True,66,0.19298245614035087
+ICA Dalastan,Sunday,2,2,1.0,True,128,0.6464646464646465
+ICA Dalastan,Thursday,1,2,0.5,True,70,0.35353535353535354
+ICA Essingen,Tuesday,1,2,0.5,True,34,0.3655913978494624
+ICA Essingen,Thursday,1,2,0.5,True,59,0.6344086021505376
+ICA Ettan,Sunday,2,2,1.0,True,230,0.6534090909090909
+ICA Ettan,Tuesday,1,2,0.5,True,44,0.125
+ICA Ettan,Thursday,1,2,0.5,True,78,0.2215909090909091
+ICA Fridhemsplan,Sunday,2,2,1.0,True,150,0.5102040816326531
+ICA Fridhemsplan,Tuesday,1,2,0.5,True,75,0.25510204081632654
+ICA Fridhemsplan,Thursday,1,2,0.5,True,69,0.23469387755102042
+ICA Glädjen,Sunday,2,2,1.0,True,204,0.5271317829457365
+ICA Glädjen,Tuesday,1,2,0.5,True,103,0.2661498708010336
+ICA Glädjen,Thursday,1,2,0.5,True,80,0.20671834625322996
+ICA Gribbylund,Sunday,2,2,1.0,True,114,0.504424778761062
+ICA Gribbylund,Tuesday,1,2,0.5,True,48,0.21238938053097345
+ICA Gribbylund,Thursday,1,2,0.5,True,64,0.2831858407079646
+ICA Grytan,Sunday,2,2,1.0,True,192,0.5818181818181818
+ICA Grytan,Tuesday,1,2,0.5,True,43,0.1303030303030303
+ICA Grytan,Thursday,1,2,0.5,True,95,0.2878787878787879
+ICA Hagsätra,Sunday,2,2,1.0,True,162,0.5586206896551724
+ICA Hagsätra,Tuesday,1,2,0.5,True,51,0.17586206896551723
+ICA Hagsätra,Thursday,1,2,0.5,True,77,0.2655172413793103
+ICA Högalid,Sunday,2,2,1.0,True,186,0.5470588235294118
+ICA Högalid,Tuesday,1,2,0.5,True,75,0.22058823529411764
+ICA Högalid,Thursday,1,2,0.5,True,79,0.2323529411764706
+ICA Hökåsen,Sunday,2,2,1.0,True,46,0.40350877192982454
+ICA Hökåsen,Tuesday,1,2,0.5,True,17,0.14912280701754385
+ICA Hökåsen,Thursday,1,2,0.5,True,51,0.4473684210526316
+ICA Hörnan,Sunday,2,2,1.0,True,188,0.5766871165644172
+ICA Hörnan,Tuesday,1,2,0.5,True,54,0.1656441717791411
+ICA Hörnan,Thursday,1,2,0.5,True,84,0.25766871165644173
+ICA MAXI Solna,Sunday,2,2,1.0,True,254,0.5474137931034483
+ICA MAXI Solna,Tuesday,1,2,0.5,True,91,0.1961206896551724
+ICA MAXI Solna,Thursday,1,2,0.5,True,119,0.25646551724137934
+ICA Mathörnan,Sunday,2,2,1.0,True,138,0.7076923076923077
+ICA Mathörnan,Thursday,1,2,0.5,True,57,0.2923076923076923
+ICA Myran Danderyd,Sunday,2,2,1.0,True,120,0.7692307692307693
+ICA Myran Danderyd,Thursday,1,2,0.5,True,36,0.23076923076923078
+ICA Norrviken,Sunday,2,2,1.0,True,190,0.6785714285714286
+ICA Norrviken,Thursday,1,2,0.5,True,90,0.32142857142857145
+ICA Nära Gärdet,Sunday,2,2,1.0,True,228,0.56575682382134
+ICA Nära Gärdet,Tuesday,1,2,0.5,True,91,0.22580645161290322
+ICA Nära Gärdet,Thursday,1,2,0.5,True,84,0.20843672456575682
+ICA Nära Lindholmen,Sunday,2,2,1.0,True,98,0.48514851485148514
+ICA Nära Lindholmen,Tuesday,1,2,0.5,True,54,0.26732673267326734
+ICA Nära Lindholmen,Thursday,1,2,0.5,True,50,0.24752475247524752
+ICA Nära Roslagstull,Sunday,2,2,1.0,True,118,0.5339366515837104
+ICA Nära Roslagstull,Tuesday,1,2,0.5,True,41,0.18552036199095023
+ICA Nära Roslagstull,Thursday,1,2,0.5,True,62,0.28054298642533937
+ICA Nära Stuvsta,Sunday,2,2,1.0,True,110,0.632183908045977
+ICA Nära Stuvsta,Tuesday,1,2,0.5,True,25,0.14367816091954022
+ICA Nära Stuvsta,Thursday,1,2,0.5,True,39,0.22413793103448276
+ICA Nära Söderhöjden,Sunday,2,2,1.0,True,110,0.5213270142180095
+ICA Nära Söderhöjden,Tuesday,1,2,0.5,True,49,0.23222748815165878
+ICA Nära Söderhöjden,Thursday,1,2,0.5,True,52,0.24644549763033174
+ICA Nära Årsta,Sunday,2,2,1.0,True,70,0.43478260869565216
+ICA Nära Årsta,Tuesday,1,2,0.5,True,48,0.2981366459627329
+ICA Nära Årsta,Thursday,1,2,0.5,True,43,0.2670807453416149
+ICA RAPID,Sunday,2,2,1.0,True,122,0.4280701754385965
+ICA RAPID,Tuesday,1,2,0.5,True,68,0.23859649122807017
+ICA RAPID,Thursday,1,2,0.5,True,95,0.3333333333333333
+ICA Råby,Sunday,2,2,1.0,True,116,0.6408839779005525
+ICA Råby,Tuesday,1,2,0.5,True,12,0.06629834254143646
+ICA Råby,Thursday,1,2,0.5,True,53,0.292817679558011
+ICA Rökubbsgatan,Sunday,2,2,1.0,True,174,0.5043478260869565
+ICA Rökubbsgatan,Tuesday,1,2,0.5,True,80,0.2318840579710145
+ICA Rökubbsgatan,Thursday,1,2,0.5,True,91,0.263768115942029
+ICA SAMköp,Sunday,2,2,1.0,True,70,0.3017241379310345
+ICA SAMköp,Tuesday,1,2,0.5,True,107,0.46120689655172414
+ICA SAMköp,Thursday,1,2,0.5,True,55,0.23706896551724138
+ICA SKiljebo,Sunday,2,2,1.0,True,128,0.6183574879227053
+ICA SKiljebo,Tuesday,1,2,0.5,True,20,0.0966183574879227
+ICA SKiljebo,Thursday,1,2,0.5,True,59,0.28502415458937197
+ICA Sigma,Sunday,2,2,1.0,True,120,0.6122448979591837
+ICA Sigma,Thursday,1,2,0.5,True,76,0.3877551020408163
+ICA Skogsbacken,Sunday,2,2,1.0,True,144,0.7461139896373057
+ICA Skogsbacken,Thursday,1,2,0.5,True,49,0.2538860103626943
+ICA Spegeln,Sunday,2,2,1.0,True,184,0.44019138755980863
+ICA Spegeln,Tuesday,1,2,0.5,True,123,0.2942583732057416
+ICA Spegeln,Thursday,1,2,0.5,True,111,0.26555023923444976
+ICA Spånga,Sunday,2,2,1.0,True,166,0.45231607629427795
+ICA Spånga,Tuesday,1,2,0.5,True,106,0.2888283378746594
+ICA Spånga,Thursday,1,2,0.5,True,95,0.25885558583106266
+ICA Stormarknad Botkyrka,Sunday,2,2,1.0,True,292,0.5604606525911708
+ICA Stormarknad Botkyrka,Tuesday,1,2,0.5,True,133,0.255278310940499
+ICA Stormarknad Botkyrka,Thursday,1,2,0.5,True,96,0.18426103646833014
+ICA Stortorget,Sunday,2,2,1.0,True,78,0.37320574162679426
+ICA Stortorget,Tuesday,1,2,0.5,True,72,0.3444976076555024
+ICA Stortorget,Thursday,1,2,0.5,True,59,0.2822966507177033
+ICA Storvreta,Sunday,2,2,1.0,True,58,0.5
+ICA Storvreta,Tuesday,1,2,0.5,True,32,0.27586206896551724
+ICA Storvreta,Thursday,1,2,0.5,True,26,0.22413793103448276
+ICA Strömsbo,Sunday,2,2,1.0,True,78,0.6610169491525424
+ICA Strömsbo,Tuesday,1,2,0.5,True,14,0.11864406779661017
+ICA Strömsbo,Thursday,1,2,0.5,True,26,0.22033898305084745
+ICA Supermarket Husby,Sunday,2,2,1.0,True,62,0.5636363636363636
+ICA Supermarket Husby,Tuesday,1,2,0.5,True,24,0.21818181818181817
+ICA Supermarket Husby,Thursday,1,2,0.5,True,24,0.21818181818181817
+ICA Supermarket Vårberg c,Sunday,2,2,1.0,True,148,0.5758754863813229
+ICA Supermarket Vårberg c,Tuesday,1,2,0.5,True,39,0.1517509727626459
+ICA Supermarket Vårberg c,Thursday,1,2,0.5,True,70,0.2723735408560311
+ICA Supermarket käppala,Sunday,2,2,1.0,True,448,0.6808510638297872
+ICA Supermarket käppala,Tuesday,1,2,0.5,True,170,0.25835866261398177
+ICA Supermarket käppala,Thursday,1,2,0.5,True,40,0.060790273556231005
+ICA Supermarket solbo,Sunday,2,2,1.0,True,94,0.5222222222222223
+ICA Supermarket solbo,Tuesday,1,2,0.5,True,49,0.2722222222222222
+ICA Supermarket solbo,Thursday,1,2,0.5,True,37,0.20555555555555555
+ICA Supermarket västerhaninge,Monday,1,1,1.0,True,71,0.4896551724137931
+ICA Supermarket västerhaninge,Wednesday,1,1,1.0,True,60,0.41379310344827586
+ICA Supermarket västerhaninge,Friday,1,1,1.0,True,14,0.09655172413793103
+ICA Söder,Sunday,2,2,1.0,True,92,0.5380116959064327
+ICA Söder,Tuesday,1,2,0.5,True,31,0.18128654970760233
+ICA Söder,Thursday,1,2,0.5,True,48,0.2807017543859649
+ICA Södra Station,Sunday,2,2,1.0,True,202,0.5012406947890818
+ICA Södra Station,Tuesday,1,2,0.5,True,95,0.23573200992555832
+ICA Södra Station,Thursday,1,2,0.5,True,106,0.2630272952853598
+ICA Torgkassen,Sunday,2,2,1.0,True,150,0.5639097744360902
+ICA Torgkassen,Tuesday,1,2,0.5,True,63,0.23684210526315788
+ICA Torgkassen,Thursday,1,2,0.5,True,53,0.19924812030075187
+ICA Viksäng,Sunday,2,2,1.0,True,164,0.7288888888888889
+ICA Viksäng,Tuesday,1,2,0.5,True,31,0.13777777777777778
+ICA Viksäng,Thursday,1,2,0.5,True,30,0.13333333333333333
+ICA Vretgränd,Sunday,2,2,1.0,True,270,0.4918032786885246
+ICA Vretgränd,Tuesday,1,2,0.5,True,107,0.19489981785063754
+ICA Vretgränd,Thursday,1,2,0.5,True,172,0.3132969034608379
+ICA Väst,Sunday,2,2,1.0,True,252,0.49411764705882355
+ICA Väst,Tuesday,1,2,0.5,True,100,0.19607843137254902
+ICA Väst,Thursday,1,2,0.5,True,158,0.30980392156862746
+ICA kvantum Danderyd,Sunday,2,2,1.0,True,248,0.6613333333333333
+ICA kvantum Danderyd,Tuesday,1,2,0.5,True,80,0.21333333333333335
+ICA kvantum Danderyd,Thursday,1,2,0.5,True,47,0.12533333333333332
+ICA kvantum Lidingö,Sunday,2,2,1.0,True,124,0.5849056603773585
+ICA kvantum Lidingö,Tuesday,1,2,0.5,True,44,0.20754716981132076
+ICA kvantum Lidingö,Thursday,1,2,0.5,True,44,0.20754716981132076
+ICA kvantum Viksjö,Monday,1,1,1.0,True,110,0.48672566371681414
+ICA kvantum Viksjö,Wednesday,1,1,1.0,True,84,0.37168141592920356
+ICA kvantum Viksjö,Friday,1,1,1.0,True,32,0.1415929203539823
+ICA kvantum åkermyntan,Monday,1,1,1.0,True,31,0.49206349206349204
+ICA kvantum åkermyntan,Wednesday,1,1,1.0,True,32,0.5079365079365079
+ICA lappkärrsberget,Sunday,2,2,1.0,True,90,0.6122448979591837
+ICA lappkärrsberget,Thursday,1,2,0.5,True,57,0.3877551020408163
+ICA maxi Häggvik,Sunday,2,2,1.0,True,400,0.4884004884004884
+ICA maxi Häggvik,Tuesday,1,2,0.5,True,180,0.21978021978021978
+ICA maxi Häggvik,Thursday,1,2,0.5,True,239,0.29181929181929184
+ICA nära Per-Erics livs,Sunday,2,2,1.0,True,52,0.3611111111111111
+ICA nära Per-Erics livs,Tuesday,1,2,0.5,True,44,0.3055555555555556
+ICA nära Per-Erics livs,Thursday,1,2,0.5,True,48,0.3333333333333333
+ICA nära Vårby gård,Sunday,2,2,1.0,True,98,0.5730994152046783
+ICA nära Vårby gård,Tuesday,1,2,0.5,True,43,0.25146198830409355
+ICA nära Vårby gård,Thursday,1,2,0.5,True,30,0.17543859649122806
+ICA supermarket Heby,Sunday,2,2,1.0,True,224,0.46473029045643155
+ICA supermarket Heby,Tuesday,1,2,0.5,True,129,0.2676348547717842
+ICA supermarket Heby,Thursday,1,2,0.5,True,129,0.2676348547717842
+ICA supermarket Nykvarn,Sunday,2,2,1.0,True,192,0.7218045112781954
+ICA supermarket Nykvarn,Tuesday,1,2,0.5,True,43,0.16165413533834586
+ICA supermarket Nykvarn,Thursday,1,2,0.5,True,31,0.11654135338345864
+ICA supermarket Salem,Sunday,2,2,1.0,True,186,0.5886075949367089
+ICA supermarket Salem,Tuesday,1,2,0.5,True,67,0.2120253164556962
+ICA supermarket Salem,Thursday,1,2,0.5,True,63,0.19936708860759494
+ICA supermarket bagarmossen,Sunday,2,2,1.0,True,112,0.4534412955465587
+ICA supermarket bagarmossen,Tuesday,1,2,0.5,True,53,0.2145748987854251
+ICA supermarket bagarmossen,Thursday,1,2,0.5,True,82,0.3319838056680162
+ICA supermarket trollbäcken,Monday,1,1,1.0,True,63,0.6057692307692307
+ICA supermarket trollbäcken,Wednesday,1,1,1.0,True,29,0.27884615384615385
+ICA supermarket trollbäcken,Friday,1,1,1.0,True,12,0.11538461538461539
+ICA Örbyhus,Sunday,2,2,1.0,True,108,0.40148698884758366
+ICA Örbyhus,Tuesday,1,2,0.5,True,89,0.3308550185873606
+ICA Örbyhus,Thursday,1,2,0.5,True,72,0.26765799256505574
+Lilla Coop Kungsängen,Sunday,2,2,1.0,True,202,0.5504087193460491
+Lilla Coop Kungsängen,Tuesday,1,2,0.5,True,65,0.1771117166212534
+Lilla Coop Kungsängen,Thursday,1,2,0.5,True,100,0.2724795640326976
+My way Sävja,Sunday,2,2,1.0,True,74,1.0
+Myway Danderyd,Sunday,2,2,1.0,True,138,1.0
+Myway Råbyvägen,Sunday,2,2,1.0,True,48,1.0
+Myway Södra Station,Sunday,2,2,1.0,True,126,0.5943396226415094
+Myway Södra Station,Tuesday,1,2,0.5,True,33,0.15566037735849056
+Myway Södra Station,Thursday,1,2,0.5,True,53,0.25
+Myway Torget,Sunday,2,2,1.0,True,36,1.0
+Nelins,Sunday,2,2,1.0,True,142,0.44936708860759494
+Nelins,Tuesday,1,2,0.5,True,78,0.2468354430379747
+Nelins,Thursday,1,2,0.5,True,96,0.3037974683544304
 Prisma Skärholmen,Tuesday,1,1,1.0,True,29,1.0
-Quickstar SOLNA,Sunday,1,2,0.5,True,33,0.5238095238095238
-Quickstar SOLNA,Tuesday,1,2,0.5,True,30,0.47619047619047616
-Stora Coop Enköping,Sunday,1,2,0.5,True,171,0.30700179533213645
-Stora Coop Enköping,Tuesday,1,2,0.5,True,126,0.22621184919210055
-Stora Coop Enköping,Thursday,2,2,1.0,True,260,0.466786355475763
-Stora Coop Spånga,Sunday,1,2,0.5,True,104,0.2979942693409742
-Stora Coop Spånga,Tuesday,1,2,0.5,True,51,0.14613180515759314
-Stora Coop Spånga,Thursday,2,2,1.0,True,194,0.5558739255014327
-Stora Coop Vinsta,Sunday,1,2,0.5,True,100,0.3105590062111801
-Stora Coop Vinsta,Tuesday,1,2,0.5,True,82,0.2546583850931677
-Stora Coop Vinsta,Thursday,2,2,1.0,True,140,0.43478260869565216
-Supergrossen Hallunda,Sunday,1,2,0.5,True,34,0.3655913978494624
-Supergrossen Hallunda,Tuesday,1,2,0.5,True,17,0.1827956989247312
-Supergrossen Hallunda,Thursday,2,2,1.0,True,42,0.45161290322580644
-Tempo Brynäs,Sunday,1,2,0.5,True,51,0.24285714285714285
-Tempo Brynäs,Tuesday,1,2,0.5,True,63,0.3
-Tempo Brynäs,Thursday,2,2,1.0,True,96,0.45714285714285713
-Tempo Fjärdhundra,Sunday,1,2,0.5,True,41,0.6212121212121212
-Tempo Fjärdhundra,Tuesday,1,2,0.5,True,25,0.3787878787878788
-Tempo finntorp,Sunday,1,1,1.0,True,54,1.0
-The Coffice KTH,Sunday,1,2,0.5,True,32,0.5
-The Coffice KTH,Tuesday,1,2,0.5,True,32,0.5
-Vivo ellbe,Sunday,1,2,0.5,True,195,0.5718475073313783
-Vivo ellbe,Tuesday,1,2,0.5,True,54,0.15835777126099707
-Vivo ellbe,Thursday,2,2,1.0,True,92,0.2697947214076246
-X-tra Stengatan,Sunday,1,2,0.5,True,31,0.2743362831858407
-X-tra Stengatan,Tuesday,1,2,0.5,True,32,0.2831858407079646
-X-tra Stengatan,Thursday,2,2,1.0,True,50,0.4424778761061947
-X-tra viksäng,Sunday,1,2,0.5,True,47,0.49473684210526314
-X-tra viksäng,Thursday,2,2,1.0,True,48,0.5052631578947369
-Xtra Surahammar,Sunday,1,2,0.5,True,41,0.45054945054945056
-Xtra Surahammar,Thursday,2,2,1.0,True,50,0.5494505494505495
+Quickstar SOLNA,Sunday,2,2,1.0,True,72,0.7058823529411765
+Quickstar SOLNA,Tuesday,1,2,0.5,True,30,0.29411764705882354
+Stora Coop Enköping,Sunday,2,2,1.0,True,358,0.549079754601227
+Stora Coop Enköping,Tuesday,1,2,0.5,True,132,0.20245398773006135
+Stora Coop Enköping,Thursday,1,2,0.5,True,162,0.24846625766871167
+Stora Coop Spånga,Sunday,2,2,1.0,True,138,0.5726141078838174
+Stora Coop Spånga,Tuesday,1,2,0.5,True,36,0.14937759336099585
+Stora Coop Spånga,Thursday,1,2,0.5,True,67,0.27800829875518673
+Stora Coop Vinsta,Monday,1,1,1.0,True,77,0.5460992907801419
+Stora Coop Vinsta,Wednesday,1,1,1.0,True,45,0.3191489361702128
+Stora Coop Vinsta,Friday,1,1,1.0,True,19,0.1347517730496454
+Stora Coop hanninge,Monday,1,1,1.0,True,56,0.32941176470588235
+Stora Coop hanninge,Wednesday,1,1,1.0,True,100,0.5882352941176471
+Stora Coop hanninge,Friday,1,1,1.0,True,14,0.08235294117647059
+Supergrossen Hallunda,Sunday,2,2,1.0,True,68,0.6296296296296297
+Supergrossen Hallunda,Tuesday,1,2,0.5,True,40,0.37037037037037035
+Tempo Brynäs,Sunday,2,2,1.0,True,120,0.5633802816901409
+Tempo Brynäs,Tuesday,1,2,0.5,True,55,0.25821596244131456
+Tempo Brynäs,Thursday,1,2,0.5,True,38,0.1784037558685446
+Tempo Fjärdhundra,Sunday,2,2,1.0,True,76,0.7835051546391752
+Tempo Fjärdhundra,Tuesday,1,2,0.5,True,21,0.21649484536082475
+Tempo Gävle Sohlbergs,Sunday,2,2,1.0,True,94,0.5696969696969697
+Tempo Gävle Sohlbergs,Tuesday,1,2,0.5,True,22,0.13333333333333333
+Tempo Gävle Sohlbergs,Thursday,1,2,0.5,True,49,0.296969696969697
+Tempo NESMA,Sunday,2,2,1.0,True,96,0.6037735849056604
+Tempo NESMA,Thursday,1,2,0.5,True,63,0.39622641509433965
+Tempo finntorp,Sunday,2,2,1.0,True,112,1.0
+The Coffice KTH,Sunday,2,2,1.0,True,64,0.5565217391304348
+The Coffice KTH,Tuesday,1,2,0.5,True,51,0.4434782608695652
+Vivo ellbe,Sunday,2,2,1.0,True,216,0.6813880126182965
+Vivo ellbe,Tuesday,1,2,0.5,True,54,0.17034700315457413
+Vivo ellbe,Thursday,1,2,0.5,True,47,0.14826498422712933
+X-tra Stengatan,Sunday,2,2,1.0,True,70,0.5
+X-tra Stengatan,Tuesday,1,2,0.5,True,36,0.2571428571428571
+X-tra Stengatan,Thursday,1,2,0.5,True,34,0.24285714285714285
+X-tra viksäng,Sunday,2,2,1.0,True,82,0.8282828282828283
+X-tra viksäng,Thursday,1,2,0.5,True,17,0.1717171717171717
+Xtra Surahammar,Sunday,2,2,1.0,True,74,0.7115384615384616
+Xtra Surahammar,Thursday,1,2,0.5,True,30,0.28846153846153844

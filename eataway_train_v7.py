@@ -1035,10 +1035,12 @@ def main():
     from datetime import date as _dt_date, timedelta as _dt_td
     _today = _dt_date.today()
 
-    # V7.6 Change: Predict for current week, unless it's Friday or Saturday, then predict for next week.
-    if _today.weekday() in [4, 5]:  # Friday or Saturday
-        _target_date = _today + _dt_td(weeks=1)
-    else:
+    # V7.7 Change: Week starts on Sunday. Current week output normally. If Saturday, predict next week.
+    if _today.weekday() == 6:  # Sunday (start of current week for Eataway)
+        _target_date = _today + _dt_td(days=1)  # Shift to Monday to get correct ISO week
+    elif _today.weekday() == 5:  # Saturday (run for NEXT week starting tomorrow)
+        _target_date = _today + _dt_td(days=2)  # Shift to next Monday to get correct ISO week
+    else:  # Monday to Friday
         _target_date = _today
     _nyear, _nweek, _ = _target_date.isocalendar()
     target_week_label = f"{_nyear}-W{_nweek:02d}"
@@ -1093,10 +1095,10 @@ def main():
             creds = Credentials.from_service_account_info(
                 json.loads(creds_env), scopes=SCOPES)
         else:
-            cred_file = _Path(__file__).parent / "eataway_system" / "credentials.json"
+            cred_file = _Path(__file__).parent / "credentials.json"
             creds = Credentials.from_service_account_file(str(cred_file), scopes=SCOPES)
 
-        # Delivery week = next_week_label (already computed as today + 1 week)
+        # Delivery week = next_week_label (already computed as today + 1 week or current week)
         yw = target_week_label  # e.g. "2026-W28"
         m_ = _re.match(r"(\d{4})-W(\d{2})", yw)
         if m_:
@@ -1104,7 +1106,9 @@ def main():
             week_sun = iso_mon - _td(days=1)   # Sunday before the delivery week's Monday
             week_sat = iso_mon + _td(days=5)   # Saturday of the delivery week
         else:
-            week_sun = week_sat = _target_date
+            # Fallback
+            week_sun = _target_date - _td(days=(_target_date.weekday() + 1) % 7)
+            week_sat = week_sun + _td(days=6)
 
         day_map = {}
         for offset in range((week_sat - week_sun).days + 1):
