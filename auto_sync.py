@@ -33,6 +33,7 @@ def run_local_training() -> bool:
     """Run feature engineering and model training locally."""
     python = sys.executable
     steps = [
+        ("Weather Data Fetch",  [python, str(BASE_DIR / "eataway_weather.py")]),
         ("Feature Engineering", [python, str(FEATURE_SCRIPT)]),
         ("Model Training",      [python, str(TRAIN_SCRIPT)]),
     ]

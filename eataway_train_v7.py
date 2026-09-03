@@ -23,7 +23,7 @@ ID_COLS = ["namn", "ort", "typ", "sort", "product_id", "year", "week", "year_wee
 
 BASE_FEATURES = [
     "week", "month", "week_sin", "week_cos", "month_sin", "month_cos",
-    "is_december", "is_summer",
+    "is_december", "is_summer", "is_swedish_vacation", "is_back_to_school",
     "is_holiday_week", "n_holidays", "is_high_impact_holiday",
     "is_pre_holiday_week", "is_post_holiday_week",
     "lag_1w", "lag_2w", "lag_3w", "lag_4w",
@@ -100,11 +100,11 @@ def merge_weather(df):
     df["weather_city"] = df["ort"].map(ORT_TO_CITY).fillna("Stockholm")
 
     weather_cols = [
-        "temp_mean", "temp_max", "temp_min", "temp_range",
-        "precip_total", "rain_total", "snow_total",
-        "wind_max", "gust_max", "sunshine_hrs",
-        "rain_days", "snow_days",
-        "is_rainy_week", "is_snowy_week", "is_cold", "is_hot",
+        "temp_mean",
+        "precip_total",
+        "wind_max",
+        "is_rainy_week",
+        "is_snowy_week"
     ]
     avail = [c for c in weather_cols if c in weather.columns]
 
@@ -200,14 +200,19 @@ def add_demand_features(df):
     df["demand_cv_4w"] = df["demand_cv_4w"].clip(0, 5).fillna(0)
     new.append("demand_cv_4w")
 
-    df["lag1_zscore"] = np.where(
-        rs4 > 0,
-        (df.get("lag_1w", pd.Series(0, index=df.index)) - rm4) / rs4.clip(lower=0.1), 0)
-    df["lag1_zscore"] = pd.to_numeric(df["lag1_zscore"], errors="coerce").fillna(0).clip(-5, 5)
-    new.append("lag1_zscore")
+    # lag1_zscore removed to prevent it from blocking zero predictions
+    # df["lag1_zscore"] = np.where(
+    #     rs4 > 0,
+    #     (df.get("lag_1w", pd.Series(0, index=df.index)) - rm4) / rs4.clip(lower=0.1), 0)
+    # df["lag1_zscore"] = pd.to_numeric(df["lag1_zscore"], errors="coerce").fillna(0).clip(-5, 5)
+    # new.append("lag1_zscore")
 
     df["is_positive"] = (df[TARGET] > 0).astype(int)
     df["log_target"] = np.log1p(df[TARGET])
+
+    df["is_swedish_vacation"] = df["week"].isin([27, 28, 29, 30, 31]).astype(int)
+    df["is_back_to_school"] = df["week"].isin([32, 33, 34, 35]).astype(int)
+    new.extend(["is_swedish_vacation", "is_back_to_school"])
 
     print(f"  Demand features: {len(new)}")
     print()
@@ -252,6 +257,14 @@ def load_and_prepare():
     if not df_holdout.empty:
         df_holdout, _ = merge_weather(df_holdout)
         df_holdout, _ = add_demand_features(df_holdout)
+
+    # Convert specific columns to category for LightGBM
+    cat_cols = ["week", "month", "weather_city"]
+    for c in cat_cols:
+        if c in df.columns:
+            df[c] = df[c].astype("category")
+        if not df_holdout.empty and c in df_holdout.columns:
+            df_holdout[c] = df_holdout[c].astype("category")
 
     features = list(dict.fromkeys(
         [c for c in BASE_FEATURES + df_feats + wf if c in df.columns]))
@@ -300,15 +313,15 @@ class CalibratedHurdleModel:
         y1t = df_train["is_positive"]
         y1v = df_val["is_positive"]
         p1 = {"objective":"binary","metric":"binary_logloss",
-              "learning_rate":0.05,"num_leaves":31,"max_depth":6,
-              "min_child_samples":30,"subsample":0.8,"colsample_bytree":0.8,
-              "reg_alpha":0.5,"reg_lambda":2.0,"is_unbalance":True,
+              "learning_rate":0.02,"num_leaves":31,"max_depth":6,
+              "min_child_samples":50,"subsample":0.8,"colsample_bytree":0.8,
+              "reg_alpha":1.0,"reg_lambda":3.0,"is_unbalance":True,
               "n_jobs":-1,"seed":SEED,"verbose":-1}
         d1 = lgb.Dataset(X_tr, label=y1t)
         d1v = lgb.Dataset(X_va, label=y1v, reference=d1)
         self.cls_model = lgb.train(
             p1, d1, num_boost_round=3000, valid_sets=[d1v],
-            callbacks=[lgb.early_stopping(80,verbose=False),lgb.log_evaluation(0)])
+            callbacks=[lgb.early_stopping(100,verbose=False),lgb.log_evaluation(0)])
 
         # Isotonic calibration
         pr = self.cls_model.predict(X_va)
@@ -329,12 +342,17 @@ class CalibratedHurdleModel:
         pos_va = df_val[df_val["is_positive"] == 1]
         y2t = np.log1p(pos_tr[TARGET].values)
         y2v = np.log1p(pos_va[TARGET].values)
+        
+        # Apply sample weights to penalize underestimation in high-demand instances
+        w2t = np.where(pos_tr[TARGET] >= 11, 2.0, 1.0)
+        
         p2 = {"objective":"regression_l1","metric":"mae",
               "learning_rate":0.05,"num_leaves":63,"min_child_samples":20,
               "subsample":0.8,"colsample_bytree":0.8,
               "reg_alpha":0.1,"reg_lambda":1.0,
               "n_jobs":-1,"seed":SEED,"verbose":-1}
-        d2 = lgb.Dataset(pos_tr[features], label=y2t)
+        
+        d2 = lgb.Dataset(pos_tr[features], label=y2t, weight=w2t)
         d2v = lgb.Dataset(pos_va[features], label=y2v, reference=d2)
         self.reg_model = lgb.train(
             p2, d2, num_boost_round=5000, valid_sets=[d2v],
@@ -353,14 +371,19 @@ class CalibratedHurdleModel:
         pr = self.cls_model.predict(X)
         pc = self.calibrator.predict(pr)
         lp = self.reg_model.predict(X)
-        # Apply lognormal correction: compensate for systematic underestimation due to Jensen's inequality
+        # Apply lognormal correction ONLY if prediction is significant enough
         sigma2 = getattr(self, "log_sigma2", 0.0)
-        lp_corrected = lp + min(sigma2 / 2, 0.5)  # same cap as during training
+        
+        # Don't apply lognormal correction to very small values which inflates zeros
+        correction = np.where(lp > 0.5, min(sigma2 / 2, 0.5), 0.0)
+        lp_corrected = lp + correction
+        
         rp = np.clip(np.expm1(lp_corrected), 0, None)
 
-        # V4: hard gate + no multiplication by P
+        # V4: hard gate
         y = rp.copy()
-        y[pc < self.threshold] = 0
+        
+        y[pc < max(self.threshold, 0.35)] = 0
         return y, pc, rp
 
     def optimize_threshold(self, df_val, features):
@@ -376,16 +399,19 @@ class CalibratedHurdleModel:
         print(f"    {'Thr':>5s}  {'MAE':>6s}  {'Bias':>7s}  {'Zero%':>6s}  {'FN':>5s}  {'Score':>7s}")
         print(f"    {'-'*46}")
 
-        for t in np.arange(0.40, 0.85, 0.05): # Ändrat startvärde från 0.15 till 0.40
+        for t in np.arange(0.40, 0.85, 0.05):
             yp = rp.copy()
             yp[pc < t] = 0
+            
+            # Post-processing zero mask for extremely low signals to reduce false positives
+            yp[(pc < t) | (yp < 0.4)] = 0
+            
             yp = np.round(yp)
             mae  = np.mean(np.abs(yt - yp))
             bias = np.mean(yp - yt)
             zr   = (yp == 0).mean()
             fn   = ((yt > 0) & (yp == 0)).sum()
             # Combined score: MAE + missed-positive penalty (underestimation cost is 2x overestimation)
-            # This pushes the optimizer toward a threshold with bias near zero or slightly positive, reducing missed positives
             score = mae + 0.5 * max(0.0, -bias)
             mk = " <" if score < best_score else ""
             if score < best_score:
@@ -424,13 +450,18 @@ class CalibratedHurdleModel:
             tm = yt[mask].mean()
             f  = tm / max(pm, 0.01) if pm > 0.1 else 1.0
 
-            # Wider upper bound: corrections supported by val data should be used
-            # The y=3-5 bin mixes in many underestimated y_true=6-10 samples,
-            # causing tm >> pm in that bin, requiring correction factor above 1.3x
-            if lo >= 6:
-                f = np.clip(f, 1.0, 1.15)   # Sänkt från 2.2 för att minska aggressiv uppjustering
+            # For y>=11 bins, apply stronger upward correction if predictions lag behind reality.
+            # Due to Val (Summer) vs Test (Autumn) seasonal shift, Val tends to overpredict.
+            # Downward correction from Val harms Test. Restrict lower bound to 1.0.
+            # Removed seasonal compression entirely (min 1.0)
+            if lo >= 21:
+                f = np.clip(f, 1.0, 1.40)
+            elif lo >= 11:
+                f = np.clip(f, 1.0, 1.30)
+            elif lo >= 6:
+                f = np.clip(f, 1.0, 1.15)
             else:
-                f = np.clip(f, 0.8, 1.25)   # Justerat för en mer balanserad korrigering
+                f = np.clip(f, 1.0, 1.15)
 
             self.bias_factors[(lo, hi)] = f
             direction = "↑" if f > 1.0 else ("↓" if f < 1.0 else "=")
@@ -440,16 +471,18 @@ class CalibratedHurdleModel:
     def predict(self, X):
         yr, pc, rp = self._raw_predict(X)
         yc = yr.copy()
+        
+        # Apply the absolute zero cutoff
+        yc[(pc < max(self.threshold, 0.35)) | (yc < 0.4)] = 0
 
         if self.bias_factors:
             for (lo, hi), f in self.bias_factors.items():
-                mask = (yr >= lo) & (yr <= hi)
+                mask = (yr >= lo) & (yr <= hi) & (yc > 0)
                 if mask.any():
                     yc[mask] = yr[mask] * f
 
-        yf = np.clip(np.round(yc), 0, None).astype(int)
         # yc is bias-corrected float (pre-rounding), used by gen_views before applying global_scale
-        return yf, pc, rp, yc
+        return yc, pc, rp, yc
 
     def feature_importance(self, features):
         cg = self.cls_model.feature_importance(importance_type="gain")
@@ -470,11 +503,15 @@ class TweedieModel:
 
     def fit(self, df_train, df_val, features):
         print("  -- Tweedie --")
-        p = {"objective":"tweedie","tweedie_variance_power":1.5,
+        
+        # Apply sample weights for high demand
+        wt = np.where(df_train[TARGET] >= 11, 2.0, 1.0)
+        
+        p = {"objective":"tweedie","tweedie_variance_power":1.15,
              "metric":"mae","learning_rate":0.05,"num_leaves":63,
              "min_child_samples":20,"subsample":0.8,"colsample_bytree":0.8,
              "reg_alpha":0.1,"reg_lambda":1.0,"n_jobs":-1,"seed":SEED,"verbose":-1}
-        d = lgb.Dataset(df_train[features], label=df_train[TARGET].values.astype(float))
+        d = lgb.Dataset(df_train[features], label=df_train[TARGET].values.astype(float), weight=wt)
         dv = lgb.Dataset(df_val[features], label=df_val[TARGET].values.astype(float), reference=d)
         self.model = lgb.train(
             p, d, num_boost_round=5000, valid_sets=[dv],
@@ -493,7 +530,7 @@ class V4Ensemble:
     def __init__(self):
         self.hurdle = CalibratedHurdleModel()
         self.tweedie = TweedieModel()
-        self.weights = [0.65, 0.35]
+        self.weights = [0.50, 0.50]
         self.features = None
 
     def fit(self, df_train, df_val, features):
@@ -512,40 +549,91 @@ class V4Ensemble:
         print("  -- Ensemble weights --")
         X = df_val[features]
         yt = df_val[TARGET].values
-        ph, _, _, _ = self.hurdle.predict(X)
-        pt = self.tweedie.predict(X)
-
-        best_score, best_w = float("inf"), 0.65
-        for wh in np.arange(0.3, 0.9, 0.05):
-            wt = 1.0 - wh
-            yp  = np.clip(np.round(wh*ph + wt*pt), 0, None)
-            mae  = np.mean(np.abs(yt - yp))
-            bias = np.mean(yp - yt)
-            # Same scoring as threshold optimization: underestimation cost is 2x overestimation
-            score = mae + 0.5 * max(0.0, -bias)
-            if score < best_score:
-                best_score, best_w = score, wh
-
-        self.weights = [best_w, 1.0 - best_w]
-        print(f"    Hurdle={best_w:.0%} Tweedie={1-best_w:.0%} Score={best_score:.3f}")
-
-        for nm, pred in [("Hurdle+BiasCorr", ph), ("Tweedie", pt)]:
-            yp = np.clip(np.round(pred.astype(float)), 0, None)
-            mae = np.mean(np.abs(yt - yp))
-            bias = np.mean(yp - yt)
-            print(f"    {nm:20s}: MAE={mae:.3f} Bias={bias:+.3f}")
-        print()
-
-    def predict(self, X):
         ph, pc, rp, ph_float = self.hurdle.predict(X)
         pt = self.tweedie.predict(X)
-        wh, wt = self.weights
-        combined = wh * ph + wt * pt
-        # combined_float uses bias-corrected float mixed with tweedie, used before global_scale rounding
+
+        # Fixed weights according to directive (80/20)
+        best_w = 0.80
+        self.weights = [best_w, 1.0 - best_w]
+        
+        c_float = best_w * ph + (1 - best_w) * pt
+        # Apply the same gate mask during optimization evaluation
+        gate_threshold = max(self.hurdle.threshold, 0.40)
+        
+        # Hard zero cutoff mask based on classifier probability
+        zero_mask_gate = pc < gate_threshold
+        
+        c_float[zero_mask_gate] = 0.0
+        
+        # Suppress tiny noise as in predict()
+        c_float[c_float < 0.6] = 0.0
+        
+        yp  = np.clip(np.round(c_float), 0, None)
+        mae  = np.mean(np.abs(yt - yp))
+        bias = np.mean(yp - yt)
+        score = mae + 0.5 * max(0.0, -bias)
+        
+        print(f"    Hurdle={best_w:.0%} Tweedie={1-best_w:.0%} Score={score:.3f}")
+
+        for nm, pred in [("Hurdle+BiasCorr", ph), ("Tweedie", pt)]:
+            pf = pred.astype(float).copy()
+            if nm == "Tweedie":
+                pf[pc < gate_threshold] = 0.0
+                pf[pf < 0.6] = 0.0
+            
+            yp = np.clip(np.round(pf), 0, None)
+            p_mae = np.mean(np.abs(yt - yp))
+            p_bias = np.mean(yp - yt)
+            print(f"    {nm:20s}: MAE={p_mae:.3f} Bias={p_bias:+.3f}")
+        print()
+
+    def predict(self, df):
+        X = df[self.features]
+        ph, pc, rp, ph_float = self.hurdle.predict(X)
+        pt = self.tweedie.predict(X)
+        
+        # We dynamically change weights based on demand level
+        # For low demand (< 5), use 100% Hurdle to prevent Tweedie from adding noise
+        # For high demand (>= 5), use 80% Hurdle + 20% Tweedie
+        wh = np.where(ph_float < 5, 1.0, self.weights[0])
+        wt = np.where(ph_float < 5, 0.0, self.weights[1])
+        
+        # 1. Calculate raw float prediction
         combined_float = wh * ph_float + wt * pt
-        yf = np.clip(np.round(combined), 0, None).astype(int)
+        
+        # 2. Enforce Hurdle probability gate on the entire ensemble
+        gate_threshold = max(self.hurdle.threshold, 0.45) # Raised slightly to cut zeros
+        zero_mask_gate = pc < gate_threshold
+        zero_mask_hurdle = ph_float < 1.0  # Cut off anything below 1.0 outright in Hurdle
+        combined_float[zero_mask_gate | zero_mask_hurdle] = 0.0
+        
+        # 3. Hard Zero Filter based on logic + average demand
+        rm4w = df.get("rolling_mean_4w", pd.Series(0, index=df.index)).to_numpy()
+        rm12w = df.get("rolling_mean_12w", pd.Series(0, index=df.index)).to_numpy()
+        lag1 = df.get("lag_1w", pd.Series(0, index=df.index)).to_numpy()
+        lag2 = df.get("lag_2w", pd.Series(0, index=df.index)).to_numpy()
+        lag3 = df.get("lag_3w", pd.Series(0, index=df.index)).to_numpy()
+
+        # Overwrite all Hurdle/Tweedie logic if the product is DEAD in the last month
+        zero_mask_dead = (rm4w == 0) & (lag1 == 0) & (lag2 == 0) & (lag3 == 0)
+        
+        # If classifier says <0.5 AND product hasn't sold more than 1 per week on average
+        zero_mask_weak = (pc < 0.5) & (rm4w < 1.0) & (lag1 <= 1)
+        
+        combined_float[zero_mask_dead | zero_mask_weak] = 0.0
+            
+        # 4. Suppress tiny noise
+        combined_float[combined_float < 1.0] = 0.0  
+        
+        # Force round to 0 if pc is low and the value is barely hanging on
+        weak_signal = (pc < 0.65) & (combined_float < 2.5)
+        combined_float[weak_signal] = 0.0
+        
+        # combined is integer output
+        yf = np.clip(np.round(combined_float), 0, None).astype(int)
+        
         return yf, {"p_cal": pc, "pred_hurdle": ph,
-                     "pred_tweedie": pt, "combined_raw": combined,
+                     "pred_tweedie": pt, "combined_raw": combined_float,
                      "combined_float": combined_float}
 
     def feature_importance(self, features):
@@ -569,14 +657,20 @@ def cmetrics(yt, yp):
             "n":len(yt)}
 
 
+def apply_hard_zero_rules(df, pred_col='pred'):
+    # Rules are now applied directly inside Ensemble predict()
+    return df
+
+
 def evaluate(model, df_test, features, v1p=None, v2p=None, v3p=None):
     print("=" * 70)
     print("V4 Evaluation")
     print("=" * 70)
 
-    X = df_test[features]
+    # Note: Predict now takes the full dataframe to access features for post-processing
     yt = df_test[TARGET].values
-    yp, det = model.predict(X)
+    yp, det = model.predict(df_test)
+    
     m = cmetrics(yt, yp)
 
     print(f"\n  MAE={m['mae']:.3f}  Bias={m['bias']:+.3f}  "
@@ -609,9 +703,11 @@ def evaluate(model, df_test, features, v1p=None, v2p=None, v3p=None):
     # By week
     print(f"\n  -- By Week --")
     edf = df_test[ID_COLS].copy()
-    edf["y_true"] = yt; edf["y_pred"] = yp
-    edf["error"] = yp-yt; edf["abs_error"] = np.abs(edf["error"])
-    edf["p_calibrated"] = det["p_cal"]
+    edf["y_true"] = yt
+    edf["y_pred"] = yp
+    edf["error"] = edf["y_pred"] - edf["y_true"]
+    edf["abs_error"] = np.abs(edf["error"])
+
     for wk in sorted(df_test["year_week"].unique()):
         s = edf[edf["year_week"]==wk]
         wm = cmetrics(s["y_true"].values, s["y_pred"].values)
@@ -677,8 +773,7 @@ def evaluate_holdout(model, df_holdout, features, actual_totals=None):
     print("Holdout Prediction (Out-of-Sample Validation)")
     print("=" * 70)
 
-    av = [c for c in features if c in df_holdout.columns]
-    yp, _ = model.predict(df_holdout[av])
+    yp, _ = model.predict(df_holdout)
     df_out = df_holdout.copy()
     df_out["y_pred"] = yp
 
@@ -702,142 +797,99 @@ def evaluate_holdout(model, df_holdout, features, actual_totals=None):
 # ============================================================================
 # Output views
 # ============================================================================
-def gen_views(model, df_full, features, global_scale: float = 1.0):
+def gen_views(model, df_full, features, target_week_label: str, target_date):
     """
-    global_scale: global multiplier to compensate for systematic model underestimation.
-      Derivation: W09 holdout measured predicted=11211 vs actual=18250 → 18250/11211=1.627
-      Conservative value of 1.50 used to prevent overcorrection; update as more actual data accumulates.
+    Generate final predictions tailored specifically for the Google Sheets export.
+    We drop the Kitchen and Driver specific formats and output a flat list of predictions.
+    """
+    print("=" * 70)
+    print("Generate Output Predictions")
+    print("=" * 70)
+    
+    import re
+    from datetime import date, timedelta
+    
+    pattern_path = Path(__file__).parent / "store_delivery_pattern.csv"
+    store_day_ratios = {}
+    if pattern_path.exists():
+        pdf = pd.read_csv(pattern_path)
+        for store, gdf in pdf.groupby("namn"):
+            store_day_ratios[store] = dict(zip(gdf["weekday"], gdf["demand_ratio"]))
+    else:
+        print("  Warning: store_delivery_pattern.csv not found!")
 
-    V7.2 fix: global_scale now acts on float predictions (before rounding),
-    not on integer predictions (after rounding). This "revives" many stores
-    that were previously rounded to 0, significantly increasing store count in the driver view.
-    Example: combined_float=0.4, scale=1.5 → 0.60 → rounds to 1 (previously 0×1.5=0)
-    """
-    print("=" * 70)
-    print("Generate Views")
-    print("=" * 70)
+    m = re.match(r"(\d{4})-W(\d{2})", target_week_label)
+    if m:
+        y, w = int(m.group(1)), int(m.group(2))
+        iso_mon = date.fromisocalendar(y, w, 1)
+    else:
+        iso_mon = target_date - timedelta(days=target_date.weekday())
+        
+    day_map = {
+        "Monday": iso_mon,
+        "Tuesday": iso_mon + timedelta(days=1),
+        "Wednesday": iso_mon + timedelta(days=2),
+        "Thursday": iso_mon + timedelta(days=3),
+        "Friday": iso_mon + timedelta(days=4),
+        "Saturday": iso_mon + timedelta(days=5),
+        "Sunday": iso_mon + timedelta(days=6)
+    }
+
     lw  = df_full["year_week"].max()
     lat = df_full[df_full["year_week"] == lw].copy()
     av  = [c for c in features if c in lat.columns]
 
     # Get raw float predictions (combined_float = float hurdle + tweedie, pre-rounding)
-    _, det = model.predict(lat[av])
+    _, det = model.predict(lat)
     yp_float = det.get("combined_float", det["combined_raw"])
-
-    # Apply global_scale at float level, then round → more stores included in views
-    if global_scale != 1.0:
-        yp_float = yp_float * global_scale
-        print(f"  [global_scale={global_scale:.3f} applied to float predictions]")
-    yp = np.clip(np.round(yp_float), 0, None).astype(int)
-
+    
+    # Align predictions back to dataframe for Post-Processing
+    lat["pred"] = yp_float
+    lat["prob_positive"] = det["p_cal"]
+    
+    # Scale and round
+    yp = np.clip(np.round(lat["pred"].values), 0, None).astype(int)
     lat["pw"] = yp
-    lat["pl"] = np.clip(np.floor(yp * 0.85).astype(int), 0, None)
-    lat["pu"] = np.ceil(yp * 1.15).astype(int) + 1
-    print(f"  week={lw}  total={yp.sum():,.0f}  zeros={int((yp==0).sum())}")
-
-    # Global fallback ratios (used when store pattern is unavailable)
-    DR_GLOBAL = {"Sunday":0.30,"Monday":0.10,"Tuesday":0.22,"Wednesday":0.08,"Thursday":0.30}
-    WEEKDAY_ORDER = {"Sunday":0,"Monday":1,"Tuesday":2,"Wednesday":3,
-                     "Thursday":4,"Friday":5,"Saturday":6}
-
-    # Load per-store delivery patterns (generated by feature.py)
-    pattern_path = Path(__file__).parent / "store_delivery_pattern.csv"
-    store_day_ratios = {}  # {store_name: {weekday: ratio}}
-    if pattern_path.exists():
-        pat = pd.read_csv(pattern_path)
-        for naam, grp in pat.groupby("namn"):
-            delivery_days = grp[grp["is_delivery_day"] == True].copy()
-            if len(delivery_days) == 0:
-                # Store has no clear pattern → fall back to global
-                continue
-            # V7.3 Change: Always split equally among the identified delivery days,
-            # ignoring the historical demand ratio.
-            n = len(delivery_days)
-            store_day_ratios[naam] = {row["weekday"]: 1.0 / n for _, row in delivery_days.iterrows()}
-        n_with_pattern = len(store_day_ratios)
-        print(f"  [Delivery patterns loaded: {n_with_pattern} stores with custom schedules]")
-    else:
-        print("  [store_delivery_pattern.csv not found — using global fixed ratios for all stores]")
 
     rows = []
     for _, r in lat.iterrows():
-        wp, wl, wu = r["pw"], r["pl"], r["pu"]
+        wp = r["pw"]
+        if wp <= 0:
+            continue
 
-        # Use store-specific delivery days. If no pattern exists, skip the store.
         store_dr = store_day_ratios.get(r["namn"], None)
         if store_dr is None:
             continue
 
         days = list(store_dr.keys())
-        rem, rl, ru = wp, wl, wu
+        rem = wp
         for i, (d, ratio) in enumerate(store_dr.items()):
             if i == len(days) - 1:
-                dp, dl, dh = rem, rl, ru
+                dp = rem
             else:
                 dp = int(round(wp * ratio))
-                dl = int(round(wl * ratio))
-                dh = int(round(wu * ratio))
-                rem -= dp; rl -= dl; ru -= dh
-            day_order = WEEKDAY_ORDER.get(d, i)
+                rem -= dp
+                
+            if dp <= 0 or d not in day_map:
+                continue
+                
+            actual_date = day_map[d]
             rows.append({
-                "namn": r["namn"], "ort": r["ort"],
-                "typ": r["typ"],   "sort": r["sort"],
-                "product_id": r["product_id"],
-                "year_week": r["year_week"], "day": d, "day_order": day_order,
-                "predicted": max(0, dp),
-                "pred_lower": max(0, dl),
-                "pred_upper": max(0, dh),
+                "Datum": str(actual_date),
+                "Ort": r["ort"],
+                "Butik": r["namn"],
+                "Typ": r["typ"],
+                "Produkt": r["sort"],
+                "Antal": max(0, dp)
             })
-    daily = pd.DataFrame(rows)
 
-    # ── Kitchen view (aggregated by product, unchanged) ───────────────────
-    do_map = {"Sunday":0,"Monday":1,"Tuesday":2,"Wednesday":3,"Thursday":4,"Friday":5,"Saturday":6}
-    kit = (daily.groupby(["day","typ","sort","product_id"], as_index=False)
-           .agg(total=("predicted","sum"), lower=("pred_lower","sum"),
-                upper=("pred_upper","sum"), stores=("namn","nunique")))
-    kit["do"] = kit["day"].map(do_map)
-    kit = kit.sort_values(["do","total"], ascending=[True,False])
-    kit["interval"] = kit["lower"].astype(str) + "~" + kit["upper"].astype(str)
-    ko = kit[["day","typ","sort","total","interval","stores"]].rename(
-        columns={"day":"Day","typ":"Type","sort":"Product",
-                 "total":"Qty","interval":"Range","stores":"Stores"})
-
-    # ── Driver view (store-level) ─────────────────────────────────────────
-    # Keep only rows with positive predictions
-    daily_pos = daily[daily["predicted"] > 0].copy()
-
-    # Build product detail string per (route, store, weekday)
-    def build_detail(grp):
-        parts = sorted([
-            f"{row['typ']}/{row['sort']}: {int(row['predicted'])}"
-            for _, row in grp.iterrows()
-        ])
-        return " | ".join(parts)
-
-    detail_map = (
-        daily_pos.groupby(["ort","namn","day"])
-        .apply(build_detail, include_groups=False)
-        .rename("product_detail")
-        .reset_index()
-    )
-
-    # Store-level aggregation
-    drv = (daily_pos.groupby(["ort","namn","day","day_order"], as_index=False)
-           .agg(total_items  =("predicted",    "sum"),
-                lower_total  =("pred_lower",   "sum"),
-                upper_total  =("pred_upper",   "sum"),
-                n_products   =("product_id",   "nunique")))
-    drv = drv.merge(detail_map, on=["ort","namn","day"], how="left")
-    drv["interval"] = drv["lower_total"].astype(str) + "~" + drv["upper_total"].astype(str)
-    drv = drv.sort_values(["ort","day_order","namn"])
-    dvo = drv[["ort","namn","day","total_items","interval","n_products","product_detail"]].rename(
-        columns={"ort":"Route","namn":"Store","day":"Day",
-                 "total_items":"Total_Qty","interval":"Range",
-                 "n_products":"N_Products","product_detail":"Products"})
-
-    print(f"  Kitchen view: {len(ko)} rows (weekday x product)")
-    print(f"  Driver view:  {len(dvo)} rows (route x store x weekday)\n")
-    return ko, dvo
+    output_df = pd.DataFrame(rows)
+    if len(output_df) > 0:
+        # Sort chronologically, then by route, store, and product
+        output_df.sort_values(by=["Datum", "Ort", "Butik", "Produkt"], inplace=True)
+    
+    print(f"  Generated {len(output_df)} rows for Google Sheets export.\n")
+    return output_df
 
 
 # ============================================================================
@@ -932,7 +984,7 @@ def plot_v4(edf, fi, v1p=None, v2p=None, v3p=None):
 # ============================================================================
 # Save
 # ============================================================================
-def save_all(model, edf, metrics, fi, kit, drv):
+def save_all(model, edf, metrics, fi, final_output):
     print("=" * 70)
     print("Save")
     print("=" * 70)
@@ -947,8 +999,7 @@ def save_all(model, edf, metrics, fi, kit, drv):
 
     edf.to_csv(OUTPUT_DIR / "evaluation_v7.csv", index=False)
     fi.to_csv(OUTPUT_DIR / "feature_importance_v7.csv", index=False)
-    kit.to_csv(OUTPUT_DIR / "kitchen_view_v7.csv", index=False, encoding="utf-8-sig")
-    drv.to_csv(OUTPUT_DIR / "driver_view_v7.csv", index=False, encoding="utf-8-sig")
+    final_output.to_csv(OUTPUT_DIR / "final_predictions_v7.csv", index=False, encoding="utf-8-sig")
     pd.DataFrame([metrics]).to_csv(OUTPUT_DIR / "metrics_v7.csv", index=False)
 
     config = {
@@ -970,7 +1021,7 @@ def save_all(model, edf, metrics, fi, kit, drv):
 def main():
     print("=" * 70)
     print("  EATAWAY V7")
-    print("  Calibrated Hurdle + Fixed Bias Correction + Store-Level Driver View")
+    print("  Calibrated Hurdle + Fixed Bias Correction + Flat Output")
     print("=" * 70 + "\n")
 
     df, features, df_holdout = load_and_prepare()
@@ -997,22 +1048,49 @@ def main():
     # ── Out-of-sample validation ─────────────────────────────────────────
     KNOWN_ACTUALS = {"2026-W09": 18250}
     evaluate_holdout(model, df_holdout, features, KNOWN_ACTUALS)
-
-    # ── "Clean" prediction using the last complete training week ──────────
-    # Truncated weeks (W08/W09/W10) have lag features contaminated by the previous truncated week's incomplete data:
-    #   W09 lag_1w = W08_truncated(11,412) instead of W08_actual(~14,000+)
-    # So predicting directly from holdout rows is unreliable.
-    # Instead use the last complete week (W07) from the training set: features are 100% clean (lag=W06 complete data)
+    
     last_clean_week = df["year_week"].max()
-    clean_rows = df[df["year_week"] == last_clean_week]
-    av = [c for c in features if c in clean_rows.columns]
-    yp_clean, _ = model.predict(clean_rows[av])
-    clean_total = yp_clean.sum()
+
+    from datetime import date as _dt_date, timedelta as _dt_td
+    _today = _dt_date.today()
+
+    if _today.weekday() == 6:  # Sunday
+        _target_date = _today + _dt_td(days=1)
+    elif _today.weekday() == 5:  # Saturday
+        _target_date = _today + _dt_td(days=2)
+    else:  # Monday to Friday
+        _target_date = _today
+    _nyear, _nweek, _ = _target_date.isocalendar()
+    target_week_label = f"{_nyear}-W{_nweek:02d}"
+
+    # ── "Clean" prediction using the target week ──────────
+    # Now that feature.py adds the future target week directly into the dataset
+    # with real weather and calendar features (and proxying lags from the last clean week),
+    # we just filter for target_week_label
+    
+    clean_rows = df_holdout[df_holdout["year_week"] == target_week_label].copy()
+    if len(clean_rows) == 0:
+        # Fallback if holdout didn't catch it
+        clean_rows = df[df["year_week"] == target_week_label].copy()
+        
+    if len(clean_rows) == 0:
+        print(f"ERROR: Could not find target week {target_week_label} in data!")
+        # Fallback to last clean week just in case
+        clean_rows = df[df["year_week"] == last_clean_week].copy()
+        
+    yp_clean, det_clean = model.predict(clean_rows)
+    # POST-PROCESSING FOR CLEAN PROXY (to match evaluation)
+    clean_rows = clean_rows.copy()
+    clean_rows["pred"] = det_clean.get("combined_float", det_clean["combined_raw"])
+    clean_rows["prob_positive"] = det_clean["p_cal"]
+    
+    clean_total = np.clip(np.round(clean_rows["pred"].values), 0, None).astype(int).sum()
     print("=" * 70)
-    print("Clean Proxy Prediction (last complete training week)")
+    print("Future Target Week Prediction")
     print("=" * 70)
-    print(f"  base_week={last_clean_week}  predicted_total={clean_total:,.0f}")
-    print(f"  (W09 actual=18,250  proxy_ratio={clean_total/18250:.2f})")
+    print(f"  target_week={target_week_label}  predicted_total={clean_total:,.0f}")
+    if clean_total > 0:
+        print(f"  (W09 actual=18,250  ratio={clean_total/18250:.2f})")
     print()
 
     # ── Global scale factor ───────────────────────────────────────────────
@@ -1020,48 +1098,31 @@ def main():
     total_actual    = edf["y_true"].sum()
     total_predicted = edf["y_pred"].sum()
     auto_scale = total_actual / max(total_predicted, 1.0)
-    # Lower bound 1.30: compensate for systematic underestimation during high-demand periods (spring, etc.)
-    # Upper bound 1.60: prevent overcorrection
-    # Once more years of data are available, the model will learn seasonality and the lower bound can be reduced to 1.0
-    VIEW_GLOBAL_SCALE = float(np.clip(auto_scale, 1.10, 1.50))
-    print(f"  Auto global_scale = {total_actual:.0f} / {total_predicted:.0f} = {auto_scale:.3f} → clipped={VIEW_GLOBAL_SCALE:.3f}\n")
-
-    # ── Generate output views (using complete training week — clean features) ─
-    kit, drv = gen_views(model, df, features, global_scale=VIEW_GLOBAL_SCALE)
+    
+    # ── Generate flat output view ─
+    # Ensure gen_views uses the clean_rows
+    final_output = gen_views(model, clean_rows, features, target_week_label, _target_date)
     plot_v4(edf, fi, v1p, v2p, v3p)
-    save_all(model, edf, metrics, fi, kit, drv)
+    save_all(model, edf, metrics, fi, final_output)
 
     # ── Save predictions/ with next-week label ────────────────────────────
-    from datetime import date as _dt_date, timedelta as _dt_td
-    _today = _dt_date.today()
-
-    # V7.7 Change: Week starts on Sunday. Current week output normally. If Saturday, predict next week.
-    if _today.weekday() == 6:  # Sunday (start of current week for Eataway)
-        _target_date = _today + _dt_td(days=1)  # Shift to Monday to get correct ISO week
-    elif _today.weekday() == 5:  # Saturday (run for NEXT week starting tomorrow)
-        _target_date = _today + _dt_td(days=2)  # Shift to next Monday to get correct ISO week
-    else:  # Monday to Friday
-        _target_date = _today
-    _nyear, _nweek, _ = _target_date.isocalendar()
-    target_week_label = f"{_nyear}-W{_nweek:02d}"
-
     PRED_DIR = Path(__file__).parent / "predictions"
     PRED_DIR.mkdir(parents=True, exist_ok=True)
-    # Remove old prediction files so only the latest week remains
-    for _old in (list(PRED_DIR.glob("*_driver.csv")) +
-                 list(PRED_DIR.glob("*_kitchen.csv")) +
-                 list(PRED_DIR.glob("*_summary.txt"))):
+    
+    # Remove old prediction files
+    for _old in PRED_DIR.glob("*_predictions.csv"):
         _old.unlink()
-    drv.to_csv(PRED_DIR / f"{target_week_label}_driver.csv",  index=False, encoding="utf-8-sig")
-    kit.to_csv(PRED_DIR / f"{target_week_label}_kitchen.csv", index=False, encoding="utf-8-sig")
-    _total = drv["Total_Qty"].sum() if "Total_Qty" in drv.columns else 0
+        
+    final_output.to_csv(PRED_DIR / f"{target_week_label}_predictions.csv", index=False, encoding="utf-8-sig")
+    
+    _total = final_output["Antal"].sum() if "Antal" in final_output.columns else 0
     (PRED_DIR / f"{target_week_label}_summary.txt").write_text(
         f"Eataway Predictions — {target_week_label}\n"
         f"Generated: {_today}\n"
         f"Total: {_total:,.0f} items\n"
         f"Base week: {last_clean_week}\n",
         encoding="utf-8")
-    print(f"  Predictions saved: predictions/{target_week_label}_driver.csv")
+    print(f"  Predictions saved: predictions/{target_week_label}_predictions.csv")
 
     print("=" * 70)
     print("  V4 DONE")
@@ -1110,45 +1171,6 @@ def main():
             week_sun = _target_date - _td(days=(_target_date.weekday() + 1) % 7)
             week_sat = week_sun + _td(days=6)
 
-        day_map = {}
-        for offset in range((week_sat - week_sun).days + 1):
-            d  = week_sun + _td(days=offset)
-            dn = d.strftime("%A")
-            if dn not in day_map:
-                day_map[dn] = d
-
-        # Flatten: one row per product
-        sheet_rows = []
-        for _, row in drv.iterrows():
-            dn = row.get("Day", "")
-            if dn not in day_map:
-                continue
-            actual_date   = day_map[dn]
-            products_str  = str(row.get("Products", ""))
-            if not products_str or products_str == "nan":
-                continue
-            for part in products_str.split(" | "):
-                part = part.strip()
-                if not part:
-                    continue
-                if ": " in part:
-                    prod_name, qty_str = part.rsplit(": ", 1)
-                    try:
-                        qty = int(float(qty_str))
-                    except Exception:
-                        qty = 1
-                else:
-                    prod_name, qty = part, 1
-                # prod_name format: "typ/sort" from build_detail()
-                if "/" in prod_name:
-                    typ_part, sort_part = prod_name.split("/", 1)
-                else:
-                    typ_part, sort_part = "", prod_name
-                sheet_rows.append([str(actual_date), str(row["Route"]),
-                                   str(row["Store"]), typ_part, sort_part, qty])
-
-        sheet_rows.sort(key=lambda r: (r[0], r[1], r[2], r[4]))
-
         # Write to Google Sheet (clear then overwrite)
         gc = gspread.authorize(creds)
         sh = gc.open_by_key(GSHEET_ID)
@@ -1157,8 +1179,11 @@ def main():
         except gspread.exceptions.WorksheetNotFound:
             ws = sh.add_worksheet(title=GSHEET_TAB, rows=5000, cols=10)
         ws.clear()
-        ws.update([["Datum", "Ort", "Butik", "Typ", "Produkt", "Antal"]] + sheet_rows, "A1")
-        print(f"  ✓ Written {len(sheet_rows)} rows → Google Sheet [{target_week_label}]")
+        
+        # final_output contains: Datum, Ort, Butik, Typ, Produkt, Antal
+        sheet_data = [final_output.columns.tolist()] + final_output.values.tolist()
+        ws.update(sheet_data, "A1")
+        print(f"  ✓ Written {len(final_output)} rows → Google Sheet [{target_week_label}]")
     except ImportError:
         print("  ✗ Export skipped: please install dependencies with pip install gspread google-auth")
     except Exception as e:

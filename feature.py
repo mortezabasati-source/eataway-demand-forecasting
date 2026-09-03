@@ -107,6 +107,79 @@ def step3_clean_names(df):
     return df
 
 
+def step3b_align_returns(df):
+    print("-" * 70)
+    print("STEP 3b: Aligning Returns (Statistical Lag Discovery)")
+    
+    # Aggregate to daily level to prevent cartesian explosion during merge
+    daily = df.groupby(['datum', 'namn', 'ort', 'typ', 'sort', 'product_id'], as_index=False).agg({
+        'antal_ordrar': 'sum',
+        'antal_returer': 'sum'
+    })
+    
+    # Extract returns and group to ensure uniqueness
+    df_orders = daily[['datum', 'namn', 'ort', 'typ', 'sort', 'product_id', 'antal_ordrar']].copy()
+    df_returns = daily[daily['antal_returer'] > 0][['datum', 'namn', 'product_id', 'antal_returer']].copy()
+    df_returns = df_returns.groupby(['datum', 'namn', 'product_id'], as_index=False)['antal_returer'].sum()
+
+    # Discover optimal lags per year/weekday statistically
+    print("  Discovering optimal lags per year/weekday...")
+    global_daily = daily.groupby('datum').agg({'antal_ordrar': 'sum', 'antal_returer': 'sum'}).reset_index()
+    global_daily['year'] = global_daily['datum'].dt.year
+    global_daily['weekday'] = global_daily['datum'].dt.weekday
+    
+    lag_map = {} # (year, weekday) -> best_lag
+    
+    for yr in global_daily['year'].unique():
+        yr_data = global_daily[global_daily['year'] == yr].copy()
+        for wd in range(7):
+            best_lag = 8 # Default
+            max_corr = -1.0
+            
+            # Test lags from 5 to 8 days (Strict operational window)
+            for test_lag in range(5, 9):
+                shifted_orders = yr_data['antal_ordrar'].shift(test_lag)
+                # Filter for the relevant weekdays
+                mask = (yr_data['datum'].dt.weekday == (wd + test_lag) % 7)
+                if mask.any():
+                    corr = yr_data.loc[mask, 'antal_returer'].corr(shifted_orders.loc[mask])
+                    if not np.isnan(corr) and corr > max_corr:
+                        max_corr = corr
+                        best_lag = test_lag
+            
+            lag_map[(yr, wd)] = best_lag
+            
+    # Sample logs for review
+    print("  Discovered Lags (Sample):")
+    for (yr, wd), lag in sorted(lag_map.items()):
+        if wd in [0, 4]: # Mon and Fri
+            print(f"    - Year {yr}, Weekday {wd} -> Best Lag: {lag}")
+
+    # Apply lags
+    df_orders['year'] = df_orders['datum'].dt.year
+    df_orders['order_weekday'] = df_orders['datum'].dt.weekday
+    df_orders['return_lag'] = df_orders.apply(lambda x: lag_map.get((x['year'], x['order_weekday']), 8), axis=1)
+    df_orders['expected_return_date'] = df_orders['datum'] + pd.to_timedelta(df_orders['return_lag'], unit='d')
+    
+    aligned = pd.merge(
+        df_orders, 
+        df_returns, 
+        left_on=['expected_return_date', 'namn', 'product_id'],
+        right_on=['datum', 'namn', 'product_id'],
+        how='left',
+        suffixes=('', '_ret')
+    )
+    
+    aligned['antal_returer'] = aligned['antal_returer'].fillna(0)
+    drop_cols = ['order_weekday', 'return_lag', 'expected_return_date', 'datum_ret', 'year']
+    aligned = aligned.drop(columns=[c for c in drop_cols if c in aligned.columns])
+    
+    n_orig = df['antal_returer'].sum()
+    n_align = aligned['antal_returer'].sum()
+    print(f"  ✓ Statistical alignment complete. Original: {n_orig:,.0f} -> Aligned: {n_align:,.0f}\n")
+    return aligned
+
+
 def step4_aggregate_weekly(df):
     print("-" * 70)
     print("STEP 4: Weekly Aggregation")
@@ -344,6 +417,7 @@ def run_cleaning_pipeline() -> pd.DataFrame:
     df = step1_remove_paused_products(df)
     df = step2_remove_non_stores(df)
     df = step3_clean_names(df)
+    df = step3b_align_returns(df)
 
     # Compute delivery patterns from daily data (before weekly aggregation)
     delivery_patterns = compute_store_delivery_patterns(df)
@@ -376,7 +450,69 @@ def get_train_cutoff(df: pd.DataFrame) -> str:
     return all_weeks[cutoff_idx - 1]  # Last week of train set
 
 
-def fill_missing_weeks(df: pd.DataFrame) -> pd.DataFrame:
+def add_future_target_week(df: pd.DataFrame) -> pd.DataFrame:
+    """
+    Creates feature rows for the upcoming target week so the model can predict it.
+    Instead of using the last known week as a proxy, we insert the future week 
+    with real calendar and weather data. Demand-based lag features are imputed 
+    using the last available complete week.
+    """
+    print("-" * 70)
+    print("Feature Engineering STEP 0.5: Adding Future Target Week")
+    
+    from datetime import date, timedelta
+    _today = date.today()
+    if _today.weekday() == 6:  # Sunday
+        target_date = _today + timedelta(days=1)
+    elif _today.weekday() == 5:  # Saturday
+        target_date = _today + timedelta(days=2)
+    else:
+        target_date = _today
+        
+    target_year, target_week, _ = target_date.isocalendar()
+    target_yw = f"{target_year}-W{target_week:02d}"
+    
+    # Get the last complete week (max year_week that is NOT truncated)
+    complete_weeks = df[df["is_truncated"] == False]["year_week"].unique()
+    if len(complete_weeks) == 0:
+        print("  ⚠ No complete weeks found, skipping future row creation")
+        return df
+        
+    last_complete_yw = sorted(complete_weeks)[-1]
+    
+    print(f"  Target Week: {target_yw} (Proxying lags from {last_complete_yw})")
+    
+    if target_yw in df["year_week"].values:
+        print(f"  Target week {target_yw} already exists in data.")
+        # Make sure to zero out actuals and mark it as truncated 
+        # so it acts as an out-of-sample prediction target
+        mask = df["year_week"] == target_yw
+        for col in ["antal_ordrar", "antal_returer", "faktisk", "weekly_ordrar", "weekly_returer"]:
+            if col in df.columns:
+                df.loc[mask, col] = 0
+        df.loc[mask, "is_truncated"] = True
+        return df
+        
+    # Copy the last complete week's rows
+    future_rows = df[df["year_week"] == last_complete_yw].copy()
+    
+    # Update time identifiers
+    future_rows["year"] = target_year
+    future_rows["week"] = target_week
+    future_rows["year_week"] = target_yw
+    future_rows["datum"] = target_date # Approximate
+    
+    # Reset target and current-week dynamic features
+    for col in ["antal_ordrar", "antal_returer", "faktisk", "weekly_ordrar", "weekly_returer"]:
+        if col in future_rows.columns:
+            future_rows[col] = 0
+            
+    # Mark as truncated so it doesn't get used in training
+    future_rows["is_truncated"] = True
+    
+    df = pd.concat([df, future_rows], ignore_index=True)
+    print(f"  ✓ Added {len(future_rows)} rows for future week {target_yw}\n")
+    return df
     print("-" * 70)
     print("Feature Engineering STEP 0: Filling Missing Weeks")
     all_weeks = sorted(df["year_week"].unique())
@@ -407,6 +543,59 @@ def fill_missing_weeks(df: pd.DataFrame) -> pd.DataFrame:
     for col in ["weekly_ordrar", "weekly_returer", "delivery_days", "active_days", "faktisk"]:
         df_full[col] = df_full[col].fillna(0)
     df_full["is_censored"] = df_full["is_censored"].fillna(False)
+    print(f"  Before Padding: {len(df):,}  After Padding: {len(df_full):,}  New Zero-value Weeks: {len(df_full)-len(df):,}\n")
+    return df_full
+
+
+
+
+def fill_missing_weeks(df: pd.DataFrame) -> pd.DataFrame:
+    print("-" * 70)
+    print("Feature Engineering STEP 0: Filling Missing Weeks")
+    all_weeks = sorted(df["year_week"].unique())
+    week_info = df[["year", "week", "year_week"]].drop_duplicates().sort_values("year_week")
+    combo_info = (
+        df.groupby(["namn", "product_id"], as_index=False)
+        .agg(ort=("ort", "first"), typ=("typ", "first"), sort=("sort", "first"))
+    )
+    combos     = list(zip(combo_info["namn"], combo_info["product_id"]))
+    
+
+
+    from itertools import product as iter_product
+    full_index = pd.DataFrame(
+        [(n, p, yw) for (n, p), yw in iter_product(combos, all_weeks)],
+        columns=["namn", "product_id", "year_week"],
+    )
+    df_full = full_index.merge(df, on=["namn", "product_id", "year_week"], how="left")
+    df_full = df_full.merge(combo_info, on=["namn", "product_id"], how="left", suffixes=("", "_fill"))
+    for col in ["ort", "typ", "sort"]:
+        df_full[col] = df_full[col].fillna(df_full[f"{col}_fill"])
+        df_full.drop(columns=[f"{col}_fill"], inplace=True)
+
+
+
+    df_full["year"] = df_full["year"].astype("float64")
+    df_full["week"] = df_full["week"].astype("float64")
+    yw_map = week_info.set_index("year_week")[["year", "week"]].to_dict("index")
+    mask = df_full["year"].isna()
+    if mask.any():
+        df_full.loc[mask, "year"] = df_full.loc[mask, "year_week"].map(lambda x: yw_map.get(x, {}).get("year"))
+        df_full.loc[mask, "week"] = df_full.loc[mask, "year_week"].map(lambda x: yw_map.get(x, {}).get("week"))
+
+
+
+    df_full["year"] = df_full["year"].astype(int)
+    df_full["week"] = df_full["week"].astype(int)
+    for col in ["weekly_ordrar", "weekly_returer", "delivery_days", "active_days", "faktisk"]:
+        if col in df_full.columns:
+            df_full[col] = df_full[col].fillna(0)
+            
+    if "is_censored" in df_full.columns:
+        df_full["is_censored"] = df_full["is_censored"].fillna(False)
+
+
+
     print(f"  Before Padding: {len(df):,}  After Padding: {len(df_full):,}  New Zero-value Weeks: {len(df_full)-len(df):,}\n")
     return df_full
 
@@ -515,23 +704,39 @@ def add_lag_features(df: pd.DataFrame) -> pd.DataFrame:
     g  = ["namn", "product_id"]
     t  = "faktisk"
 
+    # Impute missing/truncated target values for rolling calculations
+    # This prevents W36 (truncated) from ruining lag/rolling features for W37
+    # Use 4-week median for imputation to be robust against outliers
+    df["imputed_target"] = df["faktisk"].copy()
+    if "is_truncated" in df.columns:
+        # Calculate 4-week median using available historical data
+        rolling_median = df.groupby(g)["faktisk"].transform(
+            lambda x: x.shift(1).rolling(4, min_periods=1).median()
+        )
+        
+        # Apply imputation only to truncated weeks
+        mask = (df["is_truncated"] == True) & (rolling_median.notna())
+        df.loc[mask, "imputed_target"] = rolling_median[mask]
+
+    t_impute = "imputed_target"
+
     for lag in [1, 2, 3, 4]:
-        df[f"lag_{lag}w"] = df.groupby(g)[t].shift(lag)
+        df[f"lag_{lag}w"] = df.groupby(g)["faktisk"].shift(lag) # Original logic for direct lags
 
     for w in [4, 8, 12]:
-        df[f"rolling_mean_{w}w"] = df.groupby(g)[t].transform(
+        df[f"rolling_mean_{w}w"] = df.groupby(g)[t_impute].transform(
             lambda x: x.shift(1).rolling(w, min_periods=max(1, w//2)).mean())
         if w <= 8:
-            df[f"rolling_std_{w}w"] = df.groupby(g)[t].transform(
+            df[f"rolling_std_{w}w"] = df.groupby(g)[t_impute].transform(
                 lambda x: x.shift(1).rolling(w, min_periods=max(1, w//2)).std())
 
-    df["rolling_median_4w"] = df.groupby(g)[t].transform(
+    df["rolling_median_4w"] = df.groupby(g)[t_impute].transform(
         lambda x: x.shift(1).rolling(4, min_periods=2).median())
-    df["rolling_max_4w"] = df.groupby(g)[t].transform(
+    df["rolling_max_4w"] = df.groupby(g)[t_impute].transform(
         lambda x: x.shift(1).rolling(4, min_periods=2).max())
-    df["rolling_min_4w"] = df.groupby(g)[t].transform(
+    df["rolling_min_4w"] = df.groupby(g)[t_impute].transform(
         lambda x: x.shift(1).rolling(4, min_periods=2).min())
-    df["rolling_q75_4w"] = df.groupby(g)[t].transform(
+    df["rolling_q75_4w"] = df.groupby(g)[t_impute].transform(
         lambda x: x.shift(1).rolling(4, min_periods=2).quantile(0.75))
 
     # Linear trend
@@ -554,6 +759,10 @@ def add_lag_features(df: pd.DataFrame) -> pd.DataFrame:
     # Return rate
     df["return_rate"] = np.where(df["weekly_ordrar"] > 0,
                                  df["weekly_returer"] / df["weekly_ordrar"], 0)
+    df["return_rate"] = df["return_rate"].clip(0, 0.5)
+
+
+
     df["return_rate_lag1"]        = df.groupby(g)["return_rate"].shift(1)
     df["rolling_return_rate_4w"]  = df.groupby(g)["return_rate"].transform(
         lambda x: x.shift(1).rolling(4, min_periods=2).mean())
@@ -800,7 +1009,11 @@ def run_feature_engineering(weekly: pd.DataFrame) -> tuple:
     train_cutoff = get_train_cutoff(weekly)
     print(f"  Train Set Cutoff Week: {train_cutoff}  (Val/Test features exclude data after this)\n")
 
-    df = fill_missing_weeks(weekly)
+    df = add_future_target_week(weekly)
+
+
+
+    df = fill_missing_weeks(df)
 
     # fill_missing_weeks adds rows without is_truncated → NaN
     # Map back using year_week: all rows in the same week should have same is_truncated
