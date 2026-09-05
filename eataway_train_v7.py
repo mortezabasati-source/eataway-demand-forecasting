@@ -399,20 +399,20 @@ class CalibratedHurdleModel:
         print(f"    {'Thr':>5s}  {'MAE':>6s}  {'Bias':>7s}  {'Zero%':>6s}  {'FN':>5s}  {'Score':>7s}")
         print(f"    {'-'*46}")
 
-        for t in np.arange(0.40, 0.85, 0.05):
+        for t in np.arange(0.15, 0.60, 0.05):
             yp = rp.copy()
             yp[pc < t] = 0
             
             # Post-processing zero mask for extremely low signals to reduce false positives
-            yp[(pc < t) | (yp < 0.4)] = 0
+            yp[(pc < t) | (yp < 0.2)] = 0
             
             yp = np.round(yp)
             mae  = np.mean(np.abs(yt - yp))
             bias = np.mean(yp - yt)
             zr   = (yp == 0).mean()
             fn   = ((yt > 0) & (yp == 0)).sum()
-            # Combined score: MAE + missed-positive penalty (underestimation cost is 2x overestimation)
-            score = mae + 0.5 * max(0.0, -bias)
+        # Combined score: MAE + missed-positive penalty (Aggressive Strategy: underestimation cost is 5x)
+            score = mae + 5.0 * max(0.0, -bias)
             mk = " <" if score < best_score else ""
             if score < best_score:
                 best_score, best_t = score, t
@@ -451,17 +451,15 @@ class CalibratedHurdleModel:
             f  = tm / max(pm, 0.01) if pm > 0.1 else 1.0
 
             # For y>=11 bins, apply stronger upward correction if predictions lag behind reality.
-            # Due to Val (Summer) vs Test (Autumn) seasonal shift, Val tends to overpredict.
-            # Downward correction from Val harms Test. Restrict lower bound to 1.0.
-            # Removed seasonal compression entirely (min 1.0)
+            # AGGRESSIVE GROWTH STRATEGY: Enforce minimum upward bounds to ensure buffer
             if lo >= 21:
-                f = np.clip(f, 1.0, 1.40)
+                f = np.clip(f, 1.10, 1.60)
             elif lo >= 11:
-                f = np.clip(f, 1.0, 1.30)
+                f = np.clip(f, 1.05, 1.50)
             elif lo >= 6:
-                f = np.clip(f, 1.0, 1.15)
+                f = np.clip(f, 1.05, 1.35)
             else:
-                f = np.clip(f, 1.0, 1.15)
+                f = np.clip(f, 1.00, 1.25)
 
             self.bias_factors[(lo, hi)] = f
             direction = "↑" if f > 1.0 else ("↓" if f < 1.0 else "=")
@@ -472,8 +470,8 @@ class CalibratedHurdleModel:
         yr, pc, rp = self._raw_predict(X)
         yc = yr.copy()
         
-        # Apply the absolute zero cutoff
-        yc[(pc < max(self.threshold, 0.35)) | (yc < 0.4)] = 0
+        # Apply the absolute zero cutoff (lowered for aggressive strategy)
+        yc[(pc < max(self.threshold, 0.15)) | (yc < 0.2)] = 0
 
         if self.bias_factors:
             for (lo, hi), f in self.bias_factors.items():
@@ -552,13 +550,14 @@ class V4Ensemble:
         ph, pc, rp, ph_float = self.hurdle.predict(X)
         pt = self.tweedie.predict(X)
 
-        # Fixed weights according to directive (80/20)
-        best_w = 0.80
-        self.weights = [best_w, 1.0 - best_w]
+        # Ensemble Configuration for 15% Return Tolerance
+        hurdle_weight = 0.60
+        tweedie_weight = 0.40
+        self.weights = [hurdle_weight, tweedie_weight]
         
-        c_float = best_w * ph + (1 - best_w) * pt
+        c_float = hurdle_weight * ph + tweedie_weight * pt
         # Apply the same gate mask during optimization evaluation
-        gate_threshold = max(self.hurdle.threshold, 0.40)
+        gate_threshold = max(self.hurdle.threshold, 0.15)
         
         # Hard zero cutoff mask based on classifier probability
         zero_mask_gate = pc < gate_threshold
@@ -566,14 +565,14 @@ class V4Ensemble:
         c_float[zero_mask_gate] = 0.0
         
         # Suppress tiny noise as in predict()
-        c_float[c_float < 0.6] = 0.0
+        c_float[c_float < 0.3] = 0.0
         
         yp  = np.clip(np.round(c_float), 0, None)
         mae  = np.mean(np.abs(yt - yp))
         bias = np.mean(yp - yt)
         score = mae + 0.5 * max(0.0, -bias)
         
-        print(f"    Hurdle={best_w:.0%} Tweedie={1-best_w:.0%} Score={score:.3f}")
+        print(f"    Hurdle={hurdle_weight:.0%} Tweedie={tweedie_weight:.0%} Score={score:.3f}")
 
         for nm, pred in [("Hurdle+BiasCorr", ph), ("Tweedie", pt)]:
             pf = pred.astype(float).copy()
@@ -592,20 +591,19 @@ class V4Ensemble:
         ph, pc, rp, ph_float = self.hurdle.predict(X)
         pt = self.tweedie.predict(X)
         
-        # We dynamically change weights based on demand level
-        # For low demand (< 5), use 100% Hurdle to prevent Tweedie from adding noise
-        # For high demand (>= 5), use 80% Hurdle + 20% Tweedie
-        wh = np.where(ph_float < 5, 1.0, self.weights[0])
-        wt = np.where(ph_float < 5, 0.0, self.weights[1])
+        # Use fixed ensemble weights across all demand levels for 15% return tolerance
+        # (Higher overestimation buffer for all active combinations)
+        wh = self.weights[0]
+        wt = self.weights[1]
         
         # 1. Calculate raw float prediction
         combined_float = wh * ph_float + wt * pt
         
         # 2. Enforce Hurdle probability gate on the entire ensemble
-        gate_threshold = max(self.hurdle.threshold, 0.45) # Raised slightly to cut zeros
+        # Lowered gate heavily to allow more predictions
+        gate_threshold = max(self.hurdle.threshold, 0.15) 
         zero_mask_gate = pc < gate_threshold
-        zero_mask_hurdle = ph_float < 1.0  # Cut off anything below 1.0 outright in Hurdle
-        combined_float[zero_mask_gate | zero_mask_hurdle] = 0.0
+        combined_float[zero_mask_gate] = 0.0
         
         # 3. Hard Zero Filter based on logic + average demand
         rm4w = df.get("rolling_mean_4w", pd.Series(0, index=df.index)).to_numpy()
@@ -617,20 +615,21 @@ class V4Ensemble:
         # Overwrite all Hurdle/Tweedie logic if the product is DEAD in the last month
         zero_mask_dead = (rm4w == 0) & (lag1 == 0) & (lag2 == 0) & (lag3 == 0)
         
-        # If classifier says <0.5 AND product hasn't sold more than 1 per week on average
-        zero_mask_weak = (pc < 0.5) & (rm4w < 1.0) & (lag1 <= 1)
+        # Relaxed weak signal mask
+        zero_mask_weak = (pc < 0.2) & (rm4w < 0.5) & (lag1 == 0)
         
         combined_float[zero_mask_dead | zero_mask_weak] = 0.0
             
-        # 4. Suppress tiny noise
-        combined_float[combined_float < 1.0] = 0.0  
+        # 4. Suppress tiny noise (lowered)
+        combined_float[combined_float < 0.3] = 0.0  
         
-        # Force round to 0 if pc is low and the value is barely hanging on
-        weak_signal = (pc < 0.65) & (combined_float < 2.5)
-        combined_float[weak_signal] = 0.0
+        # 5. AGGRESSIVE GROWTH BUFFER
+        # Increase all surviving predictions by 15% unconditionally to prevent Sold Out
+        active_mask = combined_float > 0
+        combined_float[active_mask] = combined_float[active_mask] * 1.15
         
-        # combined is integer output
-        yf = np.clip(np.round(combined_float), 0, None).astype(int)
+        # combined is integer output (Use np.ceil to always round up partial units for extra safety)
+        yf = np.clip(np.ceil(combined_float), 0, None).astype(int)
         
         return yf, {"p_cal": pc, "pred_hurdle": ph,
                      "pred_tweedie": pt, "combined_raw": combined_float,
@@ -826,13 +825,13 @@ def gen_views(model, df_full, features, target_week_label: str, target_date):
         iso_mon = target_date - timedelta(days=target_date.weekday())
         
     day_map = {
+        "Sunday": iso_mon - timedelta(days=1),  # Sunday is the first day of the delivery week
         "Monday": iso_mon,
         "Tuesday": iso_mon + timedelta(days=1),
         "Wednesday": iso_mon + timedelta(days=2),
         "Thursday": iso_mon + timedelta(days=3),
         "Friday": iso_mon + timedelta(days=4),
-        "Saturday": iso_mon + timedelta(days=5),
-        "Sunday": iso_mon + timedelta(days=6)
+        "Saturday": iso_mon + timedelta(days=5)
     }
 
     lw  = df_full["year_week"].max()

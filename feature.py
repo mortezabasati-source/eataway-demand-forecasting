@@ -331,7 +331,7 @@ def step9_censored_flag(df):
     return df
 
 
-def compute_store_delivery_patterns(df_daily: pd.DataFrame, lookback_weeks: int = 1) -> pd.DataFrame:
+def compute_store_delivery_patterns(df_daily: pd.DataFrame, lookback_weeks: int = 3) -> pd.DataFrame:
     """
     From raw daily data (after name cleaning, before weekly aggregation),
     compute which weekdays each store typically delivers and in what proportions.
@@ -420,7 +420,7 @@ def run_cleaning_pipeline() -> pd.DataFrame:
     df = step3b_align_returns(df)
 
     # Compute delivery patterns from daily data (before weekly aggregation)
-    delivery_patterns = compute_store_delivery_patterns(df)
+    delivery_patterns = compute_store_delivery_patterns(df, lookback_weeks=3)
     delivery_patterns.to_csv(OUTPUT_DIR / "store_delivery_pattern.csv", index=False)
     print(f"✓ store_delivery_pattern.csv  ({len(delivery_patterns)} rows)\n")
 
