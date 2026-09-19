@@ -411,8 +411,8 @@ class CalibratedHurdleModel:
             bias = np.mean(yp - yt)
             zr   = (yp == 0).mean()
             fn   = ((yt > 0) & (yp == 0)).sum()
-        # Combined score: MAE + missed-positive penalty (Aggressive Strategy: underestimation cost is 5x)
-            score = mae + 5.0 * max(0.0, -bias)
+        # Combined score: MAE + missed-positive penalty (Balanced but slightly protective)
+            score = mae + 2.0 * max(0.0, -bias)
             mk = " <" if score < best_score else ""
             if score < best_score:
                 best_score, best_t = score, t
@@ -438,6 +438,7 @@ class CalibratedHurdleModel:
         yr, _, _ = self._raw_predict(X)
         yr = np.round(yr)
 
+        # Apply a moderate bias correction for high demand to prevent severe underprediction
         bins = [(0, 0), (1, 2), (3, 5), (6, 10), (11, 20), (21, 999)]
         self.bias_factors = {}
 
@@ -450,16 +451,13 @@ class CalibratedHurdleModel:
             tm = yt[mask].mean()
             f  = tm / max(pm, 0.01) if pm > 0.1 else 1.0
 
-            # For y>=11 bins, apply stronger upward correction if predictions lag behind reality.
-            # AGGRESSIVE GROWTH STRATEGY: Enforce minimum upward bounds to ensure buffer
-            if lo >= 21:
-                f = np.clip(f, 1.10, 1.60)
-            elif lo >= 11:
-                f = np.clip(f, 1.05, 1.50)
+            # Balanced correction with slight upward protection for high-demand items
+            if lo >= 11:
+                f = np.clip(f, 0.95, 1.35)
             elif lo >= 6:
-                f = np.clip(f, 1.05, 1.35)
+                f = np.clip(f, 0.90, 1.25)
             else:
-                f = np.clip(f, 1.00, 1.25)
+                f = np.clip(f, 0.85, 1.15)
 
             self.bias_factors[(lo, hi)] = f
             direction = "↑" if f > 1.0 else ("↓" if f < 1.0 else "=")
@@ -615,21 +613,20 @@ class V4Ensemble:
         # Overwrite all Hurdle/Tweedie logic if the product is DEAD in the last month
         zero_mask_dead = (rm4w == 0) & (lag1 == 0) & (lag2 == 0) & (lag3 == 0)
         
-        # Relaxed weak signal mask
-        zero_mask_weak = (pc < 0.2) & (rm4w < 0.5) & (lag1 == 0)
+        # Stricter weak signal mask to prevent predicting 1-2 for truly zero items
+        zero_mask_weak = (pc < 0.25) & (rm4w < 1.0) & (lag1 == 0)
         
         combined_float[zero_mask_dead | zero_mask_weak] = 0.0
             
-        # 4. Suppress tiny noise (lowered)
-        combined_float[combined_float < 0.3] = 0.0  
+        # 4. Suppress tiny noise (stricter to prevent false positives)
+        combined_float[combined_float < 0.5] = 0.0  
         
-        # 5. AGGRESSIVE GROWTH BUFFER
-        # Increase all surviving predictions by 15% unconditionally to prevent Sold Out
+        # 5. Apply a very mild global buffer (5%) instead of the aggressive 15%
         active_mask = combined_float > 0
-        combined_float[active_mask] = combined_float[active_mask] * 1.15
+        combined_float[active_mask] = combined_float[active_mask] * 1.05
         
-        # combined is integer output (Use np.ceil to always round up partial units for extra safety)
-        yf = np.clip(np.ceil(combined_float), 0, None).astype(int)
+        # Use np.round instead of np.ceil for unbiased integer rounding
+        yf = np.clip(np.round(combined_float), 0, None).astype(int)
         
         return yf, {"p_cal": pc, "pred_hurdle": ph,
                      "pred_tweedie": pt, "combined_raw": combined_float,
@@ -787,9 +784,8 @@ def evaluate_holdout(model, df_holdout, features, actual_totals=None):
         else:
             print(f"  {yw}: predicted={pred_total:>8,.0f}  (no actual provided)")
 
-    out_path = OUTPUT_DIR / "holdout_predictions_v7.csv"
-    df_out.to_csv(out_path, index=False)
-    print(f"\n  Saved: {out_path}\n")
+    # (Removed local CSV saving for holdout predictions)
+    print()
     return df_out
 
 
@@ -1101,31 +1097,11 @@ def main():
     # ── Generate flat output view ─
     # Ensure gen_views uses the clean_rows
     final_output = gen_views(model, clean_rows, features, target_week_label, _target_date)
-    plot_v4(edf, fi, v1p, v2p, v3p)
-    save_all(model, edf, metrics, fi, final_output)
-
-    # ── Save predictions/ with next-week label ────────────────────────────
-    PRED_DIR = Path(__file__).parent / "predictions"
-    PRED_DIR.mkdir(parents=True, exist_ok=True)
     
-    # Remove old prediction files
-    for _old in PRED_DIR.glob("*_predictions.csv"):
-        _old.unlink()
-        
-    final_output.to_csv(PRED_DIR / f"{target_week_label}_predictions.csv", index=False, encoding="utf-8-sig")
-    
-    _total = final_output["Antal"].sum() if "Antal" in final_output.columns else 0
-    (PRED_DIR / f"{target_week_label}_summary.txt").write_text(
-        f"Eataway Predictions — {target_week_label}\n"
-        f"Generated: {_today}\n"
-        f"Total: {_total:,.0f} items\n"
-        f"Base week: {last_clean_week}\n",
-        encoding="utf-8")
-    print(f"  Predictions saved: predictions/{target_week_label}_predictions.csv")
+    # (Removed local plotting and file saving for clean Google Sheets output)
 
     print("=" * 70)
     print("  V4 DONE")
-    print(f"  Output: {OUTPUT_DIR}")
     wh, wt = model.weights
     print(f"  Hurdle {wh:.0%} + Tweedie {wt:.0%}")
     print(f"  Threshold: {model.hurdle.threshold:.2f}")
